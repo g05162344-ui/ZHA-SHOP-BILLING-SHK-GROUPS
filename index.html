@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop Website | கடை Website</title>
+<style>
+  :root{--primary:#0f6e51;--primary-dark:#0a4d38;--accent:#e8792b;--bg:#f4f6f5;--text:#1c2b28;--muted:#6b7b78;--border:#dfe6e4;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Segoe UI',Noto Sans Tamil,Arial,sans-serif;background:var(--bg);color:var(--text);
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .wrap{max-width:420px;width:100%;text-align:center;}
+  .wrap h1{color:var(--primary-dark);margin-bottom:4px;}
+  .wrap p{color:var(--muted);margin-top:0;font-size:.9rem;margin-bottom:24px;}
+  .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px;
+    box-shadow:0 1px 4px rgba(0,0,0,.06);text-align:left;}
+  .card h3{margin:0 0 6px;color:var(--primary-dark);}
+  .card p{margin:0 0 14px;font-size:.85rem;color:var(--muted);}
+  a.btn{display:block;text-align:center;background:var(--primary);color:#fff;text-decoration:none;
+    padding:12px;border-radius:8px;font-weight:600;font-size:.9rem;}
+  a.btn.accent{background:var(--accent);}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🛍️ Shop Website</h1>
+    <p>கடையின் Billing மற்றும் Admin Panel-ஐ கீழே இருந்து open பண்ணுங்க</p>
+
+    <div class="card">
+      <h3>🧾 Billing App</h3>
+      <p>Daily bills, customer billing, stock மற்றும் sales — ழா BILL</p>
+      <a class="btn" href="billing.html">Open Billing App</a>
+    </div>
+
+    <div class="card">
+      <h3>⚙️ Admin Panel</h3>
+      <p>Products, Orders, Customers, Offers, Banners, Reports நிர்வகிக்க</p>
+      <a class="btn accent" href="admin.html">Open Admin Panel</a>
+    </div>
+  </div>
+</body>
+</html>
