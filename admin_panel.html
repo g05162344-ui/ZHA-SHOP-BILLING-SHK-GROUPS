@@ -163,6 +163,7 @@
   @media print{ header,.sidebar,.sidebar-overlay,.card:not(.print-only){display:none !important;} }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <!-- Firebase (cloud database) — must load BEFORE firebase-config.js and the main app script -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -230,7 +231,7 @@
       <div class="stat"><b id="statProfit">₹0</b><span>மொத்த லாபம்<br>Total Profit</span></div>
     </div>
     <div class="card">
-      <h3>பணம் முறை வாரியாக விற்பனை <span class="lang-tag">/ Payment Method-wise Sales</span></h3>
+      <h3>இன்று பணம் முறை வாரியாக விற்பனை <span class="lang-tag">/ Today's Payment Method-wise Sales</span></h3>
       <div id="payBreakdown"></div>
     </div>
   </div>
@@ -325,24 +326,37 @@
       <div id="secDaily" style="display:none;"></div>
     </div>
     <div class="card">
-      <h3>பணம் முறை வாரியாக விற்பனை / Payment Method-wise Sales</h3>
+      <h3>பணம் முறை வாரியாக விற்பனை (All-time) / Payment Method-wise Sales</h3>
       <div id="reportPayBreakdown"></div>
     </div>
     <div class="card">
       <h3 class="collapsible-h" onclick="toggleSec('secTop')">🏆 அதிகம் விற்பனையான பொருட்கள் / Top Selling Products <span id="secTopArrow">▶</span></h3>
-      <div id="secTop" style="display:none;"></div>
+      <div id="secTop" style="display:none;">
+        <div style="position:relative;height:220px;margin-bottom:10px;"><canvas id="chartTop"></canvas></div>
+        <div id="secTopList"></div>
+      </div>
     </div>
     <div class="card">
       <h3 class="collapsible-h" onclick="toggleSec('secProfit')">💹 லாப அறிக்கை / Profit Report (per product) <span id="secProfitArrow">▶</span></h3>
-      <div id="secProfit" style="display:none;"></div>
+      <div id="secProfit" style="display:none;">
+        <div id="secProfitNote"></div>
+        <div style="position:relative;height:220px;margin-bottom:10px;"><canvas id="chartProfit"></canvas></div>
+        <div id="secProfitList"></div>
+      </div>
     </div>
     <div class="card">
       <h3 class="collapsible-h" onclick="toggleSec('secStockVal')">📦 ஸ்டாக் மதிப்பு அறிக்கை / Stock Value Report <span id="secStockValArrow">▶</span></h3>
-      <div id="secStockVal" style="display:none;"></div>
+      <div id="secStockVal" style="display:none;">
+        <div style="position:relative;height:220px;margin-bottom:10px;"><canvas id="chartStockVal"></canvas></div>
+        <div id="secStockValList"></div>
+      </div>
     </div>
     <div class="card">
       <h3 class="collapsible-h" onclick="toggleSec('secCustRep')">👥 வாடிக்கையாளர் வாங்குதல் அறிக்கை / Customer Purchase Report <span id="secCustRepArrow">▶</span></h3>
-      <div id="secCustRep" style="display:none;"></div>
+      <div id="secCustRep" style="display:none;">
+        <div style="position:relative;height:220px;margin-bottom:10px;"><canvas id="chartCustRep"></canvas></div>
+        <div id="secCustRepList"></div>
+      </div>
     </div>
   </div>
 
@@ -632,6 +646,35 @@ function toggleSec(id){
   const isHidden = box.style.display === 'none';
   box.style.display = isHidden ? 'block' : 'none';
   if(arrow) arrow.textContent = isHidden ? '▼' : '▶';
+  if(isHidden) updateReportChart(id);
+}
+
+// ---------- Report charts (Chart.js) ----------
+const chartInstances = {};
+function drawBarChart(canvasId, labels, dataValues, seriesLabel, color){
+  const canvasEl = document.getElementById(canvasId);
+  if(!canvasEl) return;
+  if(chartInstances[canvasId]){ chartInstances[canvasId].destroy(); }
+  if(!labels.length){ return; }
+  chartInstances[canvasId] = new Chart(canvasEl.getContext('2d'), {
+    type: 'bar',
+    data: { labels: labels, datasets: [{ label: seriesLabel, data: dataValues, backgroundColor: color, borderRadius: 4 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { autoSkip: false, maxRotation: 55, minRotation: 25, font: { size: 9 } } },
+        y: { beginAtZero: true }
+      }
+    }
+  });
+}
+function updateReportChart(id){
+  const d = window._reportChartData || {};
+  if(id === 'secTop' && d.top) drawBarChart('chartTop', d.top.labels, d.top.values, 'Units sold', '#0f6e51');
+  if(id === 'secProfit' && d.profit) drawBarChart('chartProfit', d.profit.labels, d.profit.values, 'Profit (₹)', '#e8792b');
+  if(id === 'secStockVal' && d.stockVal) drawBarChart('chartStockVal', d.stockVal.labels, d.stockVal.values, 'Stock value (₹)', '#3454d1');
+  if(id === 'secCustRep' && d.custRep) drawBarChart('chartCustRep', d.custRep.labels, d.custRep.values, 'Total spent (₹)', '#c0392b');
 }
 
 // ---------- Billing: item search / add ----------
@@ -1180,7 +1223,7 @@ function renderDashboard(){
   document.getElementById('statInvestment').textContent = '₹'+totalInvestment;
 
   document.getElementById('statProfit').textContent = '₹'+totalProfitAll();
-  document.getElementById('payBreakdown').innerHTML = paymentBreakdownHtml();
+  document.getElementById('payBreakdown').innerHTML = paymentBreakdownHtml(todaysBills, "இன்று / Today's Sales");
 }
 
 function totalProfitAll(){
@@ -1194,53 +1237,74 @@ function totalProfitAll(){
   return totalProfit;
 }
 
-function paymentBreakdownHtml(){
-  const allTotal = bills.reduce((s,b)=>s+b.total,0);
-  let cashSale=0, upiSale=0, cardSale=0, noPaySale=0;
-  let cashCount=0, upiCount=0, cardCount=0, multiCount=0, noPayCount=0, multiTotal=0;
-  bills.forEach(b=>{
+function paymentBreakdownHtml(billsList, label){
+  const list = billsList || bills;
+  const labelText = label || 'All-time';
+  const total = list.reduce((s,b)=>s+b.total,0);
+  let cash=0, upi=0, card=0, other=0;
+  list.forEach(b=>{
     const p = b.payment;
-    if(!p || (Array.isArray(p) && p.length===0)){ noPaySale += b.total; noPayCount++; }
-    else if(typeof p === 'string'){
-      if(p==='Cash'){ cashSale += b.total; cashCount++; }
-      else if(p==='UPI'){ upiSale += b.total; upiCount++; }
-      else if(p==='Card'){ cardSale += b.total; cardCount++; }
-    } else if(Array.isArray(p) && p.length===1){
-      const m = p[0].method, amt = p[0].amount || b.total;
-      if(m==='Cash'){ cashSale += amt; cashCount++; }
-      else if(m==='UPI'){ upiSale += amt; upiCount++; }
-      else if(m==='Card'){ cardSale += amt; cardCount++; }
-    } else if(Array.isArray(p) && p.length>1){
+    if(!p || (Array.isArray(p) && p.length===0)){ other += b.total; return; }
+    if(typeof p === 'string'){
+      if(p==='Cash') cash += b.total;
+      else if(p==='UPI') upi += b.total;
+      else if(p==='Card') card += b.total;
+      return;
+    }
+    if(Array.isArray(p)){
       p.forEach(entry=>{
-        if(entry.method==='Cash') cashSale += entry.amount||0;
-        else if(entry.method==='UPI') upiSale += entry.amount||0;
-        else if(entry.method==='Card') cardSale += entry.amount||0;
+        if(entry.method==='Cash') cash += entry.amount||0;
+        else if(entry.method==='UPI') upi += entry.amount||0;
+        else if(entry.method==='Card') card += entry.amount||0;
       });
-      multiTotal += b.total; multiCount++;
     }
   });
-  const grandForPct = allTotal || 1;
-  const pct = (v)=> Math.round((v/grandForPct)*100);
-  return `
-    <div class="pay-stat-grid">
-      <div class="pay-stat cash"><div class="ps-icon">💵</div><div class="ps-label">Cash Sale<br><span class="lang-tag">பணம் விற்பனை</span></div><div class="ps-amt">₹${cashSale}</div><div class="ps-sub">${cashCount} bills · ${pct(cashSale)}%</div></div>
-      <div class="pay-stat upi"><div class="ps-icon">📱</div><div class="ps-label">UPI Sale<br><span class="lang-tag">யுபிஐ விற்பனை</span></div><div class="ps-amt">₹${upiSale}</div><div class="ps-sub">${upiCount} bills · ${pct(upiSale)}%</div></div>
-      <div class="pay-stat card"><div class="ps-icon">💳</div><div class="ps-label">Card Sale<br><span class="lang-tag">கார்டு விற்பனை</span></div><div class="ps-amt">₹${cardSale}</div><div class="ps-sub">${cardCount} bills · ${pct(cardSale)}%</div></div>
-      <div class="pay-stat multi"><div class="ps-icon">🔀</div><div class="ps-label">Multi Sale<br><span class="lang-tag">split bills (info)</span></div><div class="ps-amt">₹${multiTotal}</div><div class="ps-sub">${multiCount} bills split</div></div>
+  const grand = total || 1;
+  const pct = v => Math.round((v/grand)*100);
+  const payRow = (icon,name,tamilName,amt,color) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:1.15rem;">${icon}</span>
+        <div>
+          <div class="item-name" style="font-size:.85rem;">${name} <span class="lang-tag">${tamilName}</span></div>
+        </div>
+      </div>
+      <div class="item-name">₹${amt} <span class="lang-tag">(${pct(amt)}%)</span></div>
     </div>
-    <div class="split-note" style="margin-top:8px;">Cash + UPI + Card = ₹${cashSale+upiSale+cardSale} (should match All-time sales)</div>
-    ${noPaySale>0 ? `<div class="split-note" style="margin-top:10px;">❔ Payment method குறிப்பிடாத bills: ₹${noPaySale} (${noPayCount} bills)</div>` : ''}
+    <div style="height:8px;background:var(--border);border-radius:6px;overflow:hidden;margin-bottom:12px;">
+      <div style="height:100%;width:${pct(amt)}%;background:${color};"></div>
+    </div>
+  `;
+  return `
+    <div class="split-note" style="margin-bottom:10px;">${labelText} · மொத்த விற்பனை / Total: <b>₹${total}</b> (${list.length} bills)</div>
+    ${payRow('💵','Cash','பணம்',cash,'#0f6e51')}
+    ${payRow('📱','UPI','யுபிஐ',upi,'#3454d1')}
+    ${payRow('💳','Card','கார்டு',card,'#e8792b')}
+    ${other>0 ? `<div class="split-note">❔ பணம் முறை குறிப்பிடாத bills / Not specified: ₹${other}</div>` : ''}
   `;
 }
 
 // ---------- Reports ----------
 function renderReports(){
-  // Daily / date-wise sales
+  // Daily / date-wise sales — with Cash/UPI/Card breakdown saved per day
   const dayMap = {};
   bills.forEach(b=>{
     const dKey = new Date(b.date).toDateString();
-    if(!dayMap[dKey]) dayMap[dKey] = { total:0, count:0, date:b.date };
+    if(!dayMap[dKey]) dayMap[dKey] = { total:0, count:0, date:b.date, cash:0, upi:0, card:0, other:0 };
     dayMap[dKey].total += b.total; dayMap[dKey].count += 1;
+    const p = b.payment;
+    if(!p || (Array.isArray(p) && p.length===0)){ dayMap[dKey].other += b.total; }
+    else if(typeof p === 'string'){
+      if(p==='Cash') dayMap[dKey].cash += b.total;
+      else if(p==='UPI') dayMap[dKey].upi += b.total;
+      else if(p==='Card') dayMap[dKey].card += b.total;
+    } else if(Array.isArray(p)){
+      p.forEach(entry=>{
+        if(entry.method==='Cash') dayMap[dKey].cash += entry.amount||0;
+        else if(entry.method==='UPI') dayMap[dKey].upi += entry.amount||0;
+        else if(entry.method==='Card') dayMap[dKey].card += entry.amount||0;
+      });
+    }
   });
   const dayList = Object.entries(dayMap).map(([dKey,v])=>({dKey,...v})).sort((a,b)=> new Date(b.date) - new Date(a.date));
   const allTotal = bills.reduce((s,b)=>s+b.total,0);
@@ -1248,19 +1312,22 @@ function renderReports(){
   dayBox.innerHTML = `<div class="split-note" style="margin-bottom:6px;">Total Sales (all-time): <b>₹${allTotal}</b> across ${bills.length} bills</div>` +
     (dayList.length===0 ? '<div class="empty">தரவு இல்லை / No data yet</div>' :
     dayList.map(d=>`
-      <div class="item-row">
-        <div><div class="item-name">${new Date(d.date).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</div><div class="item-sub">${d.count} bills</div></div>
-        <div class="item-name">₹${d.total}</div>
+      <div class="item-row" style="flex-direction:column;align-items:stretch;">
+        <div style="display:flex;justify-content:space-between;">
+          <div><div class="item-name">${new Date(d.date).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</div><div class="item-sub">${d.count} bills</div></div>
+          <div class="item-name">₹${d.total}</div>
+        </div>
+        <div class="item-sub" style="margin-top:4px;">💵 Cash ₹${d.cash} · 📱 UPI ₹${d.upi} · 💳 Card ₹${d.card}${d.other>0 ? (' · ❔ ₹'+d.other) : ''}</div>
       </div>`).join(''));
 
   // Payment breakdown (reuse)
-  document.getElementById('reportPayBreakdown').innerHTML = paymentBreakdownHtml();
+  document.getElementById('reportPayBreakdown').innerHTML = paymentBreakdownHtml(bills, 'All-time');
 
   // Top selling products
   const tally = {};
   bills.forEach(b=> b.items.forEach(it=>{ tally[it.name] = (tally[it.name]||0) + it.qty; }));
   const sortedTop = Object.entries(tally).sort((a,b)=>b[1]-a[1]).slice(0,10);
-  document.getElementById('secTop').innerHTML = sortedTop.length===0 ? '<div class="empty">தரவு இல்லை / No data yet</div>' :
+  document.getElementById('secTopList').innerHTML = sortedTop.length===0 ? '<div class="empty">தரவு இல்லை / No data yet</div>' :
     sortedTop.map(([name,qty])=>`<div class="item-row"><div class="item-name">${escapeHtml(name)}</div><div class="item-sub">${qty} units sold</div></div>`).join('');
 
   // Profit report per product
@@ -1274,14 +1341,14 @@ function renderReports(){
     }
   }));
   const profitList = Object.entries(profitMap).sort((a,b)=>b[1].profit-a[1].profit);
-  document.getElementById('secProfit').innerHTML =
-    `<div class="split-note" style="margin-bottom:6px;">Total Profit: <b>₹${totalProfitAll()}</b> (products without a buying price aren't counted)</div>` +
+  document.getElementById('secProfitNote').innerHTML = `<div class="split-note" style="margin-bottom:6px;">Total Profit: <b>₹${totalProfitAll()}</b> (products without a buying price aren't counted)</div>`;
+  document.getElementById('secProfitList').innerHTML =
     (profitList.length===0 ? '<div class="empty">தரவு இல்லை / No data yet</div>' :
     profitList.map(([name,v])=>`<div class="item-row"><div><div class="item-name">${escapeHtml(name)}</div><div class="item-sub">${v.qty} units sold</div></div><div class="item-name">₹${v.profit}</div></div>`).join(''));
 
   // Stock value report
   const stockSorted = products.slice().sort((a,b)=>(b.stock*b.price)-(a.stock*a.price));
-  document.getElementById('secStockVal').innerHTML = stockSorted.length===0 ? '<div class="empty">பொருட்கள் இல்லை / No products</div>' :
+  document.getElementById('secStockValList').innerHTML = stockSorted.length===0 ? '<div class="empty">பொருட்கள் இல்லை / No products</div>' :
     stockSorted.map(p=>`
       <div class="item-row">
         <div><div class="item-name">${escapeHtml(p.name)}</div><div class="item-sub">Stock: ${p.stock} × ₹${p.price}</div></div>
@@ -1290,12 +1357,29 @@ function renderReports(){
 
   // Customer purchase report
   const custList = buildCustomerList().slice().sort((a,b)=>b.total-a.total).slice(0,15);
-  document.getElementById('secCustRep').innerHTML = custList.length===0 ? '<div class="empty">வாடிக்கையாளர்கள் இல்லை / No customers yet</div>' :
+  document.getElementById('secCustRepList').innerHTML = custList.length===0 ? '<div class="empty">வாடிக்கையாளர்கள் இல்லை / No customers yet</div>' :
     custList.map(c=>`
       <div class="item-row">
         <div><div class="item-name">${escapeHtml(c.name)}</div><div class="item-sub">${c.phone ? escapeHtml(c.phone)+' · ' : ''}${c.count} bills</div></div>
         <div class="item-name">₹${c.total}</div>
       </div>`).join('');
+
+  // Store chart-ready data (top 8 only, so labels stay readable) + redraw any
+  // section that's currently open, so real-time updates reflect in charts too
+  const chartTop10 = sortedTop.slice(0,8);
+  const chartProfitTop = profitList.filter(([,v])=>v.profit>0).slice(0,8);
+  const chartStockTop = stockSorted.filter(p=>p.stock*p.price>0).slice(0,8);
+  const chartCustTop = custList.slice(0,8);
+  window._reportChartData = {
+    top: { labels: chartTop10.map(([name])=>name), values: chartTop10.map(([,qty])=>qty) },
+    profit: { labels: chartProfitTop.map(([name])=>name), values: chartProfitTop.map(([,v])=>v.profit) },
+    stockVal: { labels: chartStockTop.map(p=>p.name), values: chartStockTop.map(p=>p.stock*p.price) },
+    custRep: { labels: chartCustTop.map(c=>c.name), values: chartCustTop.map(c=>c.total) }
+  };
+  ['secTop','secProfit','secStockVal','secCustRep'].forEach(id=>{
+    const box = document.getElementById(id);
+    if(box && box.style.display !== 'none') updateReportChart(id);
+  });
 }
 
 // ---------- Backup / Restore / Excel ----------
@@ -1387,6 +1471,18 @@ function changeCredentials(){
   document.getElementById('newPass').value = ''; document.getElementById('newPass2').value = '';
   toast('Account மாற்றப்பட்டது / Account updated');
 }
+
+// ---------- Auto-refresh (so "Today's Sales" flips over at midnight
+// automatically, even if the panel is left open) ----------
+let _lastKnownDay = new Date().toDateString();
+setInterval(function(){
+  const nowDay = new Date().toDateString();
+  const appVisible = document.getElementById('appShell').style.display !== 'none';
+  if(!appVisible) return;
+  if(nowDay !== _lastKnownDay){ _lastKnownDay = nowDay; }
+  const active = document.querySelector('#appShell .screen.active');
+  if(active && active.id === 'dashboard') renderDashboard();
+}, 60000);
 </script>
 </body>
 </html>
