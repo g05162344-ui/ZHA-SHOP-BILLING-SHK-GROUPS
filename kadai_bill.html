@@ -410,7 +410,7 @@
     <div class="stat"><b id="statProfit">₹0</b><span>மொத்த லாபம் (விற்பனையில்)<br>Total profit (from sales)</span></div>
   </div>
   <div class="card">
-    <h3>பணம் முறை வாரியாக விற்பனை / Sales by Payment Method</h3>
+    <h3>இன்று பணம் முறை வாரியாக விற்பனை / Today's Sales by Payment Method</h3>
     <div id="payBreakdown"></div>
   </div>
   <div class="card">
@@ -1511,75 +1511,70 @@ function renderDashboard(){
   });
   document.getElementById('statProfit').textContent = '₹'+totalProfit;
 
-  // sales by payment method: each method's actual amount received (split bills distributed correctly)
-  let cashSale=0, upiSale=0, cardSale=0, noPaySale=0;
-  let cashCount=0, upiCount=0, cardCount=0, multiCount=0, noPayCount=0;
-  let multiTotal=0; // informational only: total value of bills that used more than one method
-  bills.forEach(b=>{
+  // sales by payment method: TODAY only (resets automatically each day)
+  let cash=0, upi=0, card=0, other=0;
+  todaysBills.forEach(b=>{
     const p = b.payment;
-    if(!p || (Array.isArray(p) && p.length===0)){
-      noPaySale += b.total; noPayCount++;
-    } else if(typeof p === 'string'){ // old format, single method
-      if(p==='Cash'){ cashSale += b.total; cashCount++; }
-      else if(p==='UPI'){ upiSale += b.total; upiCount++; }
-      else if(p==='Card'){ cardSale += b.total; cardCount++; }
-    } else if(Array.isArray(p) && p.length===1){
-      const m = p[0].method;
-      const amt = p[0].amount || b.total;
-      if(m==='Cash'){ cashSale += amt; cashCount++; }
-      else if(m==='UPI'){ upiSale += amt; upiCount++; }
-      else if(m==='Card'){ cardSale += amt; cardCount++; }
-    } else if(Array.isArray(p) && p.length>1){
-      // split bill: distribute each portion to its own method
+    if(!p || (Array.isArray(p) && p.length===0)){ other += b.total; return; }
+    if(typeof p === 'string'){
+      if(p==='Cash') cash += b.total;
+      else if(p==='UPI') upi += b.total;
+      else if(p==='Card') card += b.total;
+      return;
+    }
+    if(Array.isArray(p)){
       p.forEach(entry=>{
-        if(entry.method==='Cash') cashSale += entry.amount||0;
-        else if(entry.method==='UPI') upiSale += entry.amount||0;
-        else if(entry.method==='Card') cardSale += entry.amount||0;
+        if(entry.method==='Cash') cash += entry.amount||0;
+        else if(entry.method==='UPI') upi += entry.amount||0;
+        else if(entry.method==='Card') card += entry.amount||0;
       });
-      multiTotal += b.total; multiCount++;
     }
   });
-  const grandForPct = allTotal || 1; // avoid divide by zero
+  const grandForPct = todayTotal || 1; // avoid divide by zero
   const pct = (v)=> Math.round((v/grandForPct)*100);
+  const payRow = (icon,name,tamilName,amt,color) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:1.15rem;">${icon}</span>
+        <div class="item-name" style="font-size:.85rem;">${name} <span class="lang-tag">${tamilName}</span></div>
+      </div>
+      <div class="item-name">₹${amt} <span class="lang-tag">(${pct(amt)}%)</span></div>
+    </div>
+    <div style="height:8px;background:var(--border);border-radius:6px;overflow:hidden;margin-bottom:12px;">
+      <div style="height:100%;width:${pct(amt)}%;background:${color};"></div>
+    </div>
+  `;
   const payBox = document.getElementById('payBreakdown');
   payBox.innerHTML = `
-    <div class="pay-stat-grid">
-      <div class="pay-stat cash">
-        <div class="ps-icon">💵</div>
-        <div class="ps-label">Cash Sale<br><span class="lang-tag">பணம் விற்பனை</span></div>
-        <div class="ps-amt">₹${cashSale}</div>
-        <div class="ps-sub">${cashCount} bills · ${pct(cashSale)}%</div>
-      </div>
-      <div class="pay-stat upi">
-        <div class="ps-icon">📱</div>
-        <div class="ps-label">UPI Sale<br><span class="lang-tag">யுபிஐ விற்பனை</span></div>
-        <div class="ps-amt">₹${upiSale}</div>
-        <div class="ps-sub">${upiCount} bills · ${pct(upiSale)}%</div>
-      </div>
-      <div class="pay-stat card">
-        <div class="ps-icon">💳</div>
-        <div class="ps-label">Card Sale<br><span class="lang-tag">கார்டு விற்பனை</span></div>
-        <div class="ps-amt">₹${cardSale}</div>
-        <div class="ps-sub">${cardCount} bills · ${pct(cardSale)}%</div>
-      </div>
-      <div class="pay-stat multi">
-        <div class="ps-icon">🔀</div>
-        <div class="ps-label">Multi Sale<br><span class="lang-tag">split bills (info)</span></div>
-        <div class="ps-amt">₹${multiTotal}</div>
-        <div class="ps-sub">${multiCount} bills split ஆனது (already Cash/UPI/Card-ல சேர்க்கப்பட்டது)</div>
-      </div>
-    </div>
-    <div class="split-note" style="margin-top:8px;">Cash + UPI + Card = ₹${cashSale+upiSale+cardSale} (should match All-time sales)</div>
-    ${noPaySale>0 ? `<div class="split-note" style="margin-top:10px;">❔ Payment method குறிப்பிடாத bills: ₹${noPaySale} (${noPayCount} bills)</div>` : ''}
+    <div class="split-note" style="margin-bottom:10px;">இன்று / Today · மொத்தம் / Total: <b>₹${todayTotal}</b> (${todaysBills.length} bills)</div>
+    ${payRow('💵','Cash','பணம்',cash,'#0f6e51')}
+    ${payRow('📱','UPI','யுபிஐ',upi,'#3454d1')}
+    ${payRow('💳','Card','கார்டு',card,'#e8792b')}
+    ${other>0 ? `<div class="split-note">❔ பணம் முறை குறிப்பிடாத bills / Not specified: ₹${other}</div>` : ''}
   `;
 
   // day-wise sales: group bills by calendar date, most recent first
+  // (includes Cash/UPI/Card breakdown per day, so payment data is available
+  // for every past day, not just today)
   const dayMap = {};
   bills.forEach(b=>{
     const dKey = new Date(b.date).toDateString();
-    if(!dayMap[dKey]) dayMap[dKey] = { total:0, count:0, date:b.date };
+    if(!dayMap[dKey]) dayMap[dKey] = { total:0, count:0, date:b.date, cash:0, upi:0, card:0, other:0 };
     dayMap[dKey].total += b.total;
     dayMap[dKey].count += 1;
+    const p = b.payment;
+    if(!p || (Array.isArray(p) && p.length===0)){ dayMap[dKey].other += b.total; }
+    else if(typeof p === 'string'){
+      if(p==='Cash') dayMap[dKey].cash += b.total;
+      else if(p==='UPI') dayMap[dKey].upi += b.total;
+      else if(p==='Card') dayMap[dKey].card += b.total;
+    } else if(Array.isArray(p)){
+      p.forEach(entry=>{
+        if(entry.method==='Cash') dayMap[dKey].cash += entry.amount||0;
+        else if(entry.method==='UPI') dayMap[dKey].upi += entry.amount||0;
+        else if(entry.method==='Card') dayMap[dKey].card += entry.amount||0;
+      });
+    }
   });
   const dayList = Object.entries(dayMap)
     .map(([dKey,v])=>({ dKey, ...v }))
@@ -1589,12 +1584,15 @@ function renderDashboard(){
     dayBox.innerHTML = '<div class="empty">தரவு இல்லை / No data yet</div>';
   } else {
     dayBox.innerHTML = dayList.map(d=>`
-      <div class="item-row">
-        <div>
-          <div class="item-name">${new Date(d.date).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</div>
-          <div class="item-sub">${d.count} bills</div>
+      <div class="item-row" style="flex-direction:column;align-items:stretch;">
+        <div style="display:flex;justify-content:space-between;">
+          <div>
+            <div class="item-name">${new Date(d.date).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</div>
+            <div class="item-sub">${d.count} bills</div>
+          </div>
+          <div class="item-name">₹${d.total}</div>
         </div>
-        <div class="item-name">₹${d.total}</div>
+        <div class="item-sub" style="margin-top:4px;">💵 Cash ₹${d.cash} · 📱 UPI ₹${d.upi} · 💳 Card ₹${d.card}${d.other>0 ? (' · ❔ ₹'+d.other) : ''}</div>
       </div>
     `).join('');
   }
@@ -1620,6 +1618,16 @@ renderStock();
 
 // connect to cloud database (if firebase-config.js has been filled in)
 if(initFirebase()){ startCloudSync(); }
+
+// auto-refresh so "Today's Sales" flips over at midnight automatically,
+// even if the page is left open
+let _lastKnownDay = new Date().toDateString();
+setInterval(function(){
+  const nowDay = new Date().toDateString();
+  if(nowDay !== _lastKnownDay){ _lastKnownDay = nowDay; }
+  const active = document.querySelector('.screen.active');
+  if(active && active.id === 'dashboard') renderDashboard();
+}, 60000);
 </script>
 </body>
 </html>
