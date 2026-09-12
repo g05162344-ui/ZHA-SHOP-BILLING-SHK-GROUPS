@@ -163,7 +163,7 @@
   @media print{ header,.sidebar,.sidebar-overlay,.card:not(.print-only){display:none !important;} }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <!-- Firebase (cloud database) — must load BEFORE firebase-config.js and the main app script -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -654,27 +654,45 @@ const chartInstances = {};
 function drawBarChart(canvasId, labels, dataValues, seriesLabel, color){
   const canvasEl = document.getElementById(canvasId);
   if(!canvasEl) return;
+  const wrapper = canvasEl.parentElement;
+  if(typeof Chart === 'undefined'){
+    if(wrapper) wrapper.innerHTML = '<div class="empty">📉 Chart library load ஆகல் — Internet connection check பண்ணி page-ஐ refresh பண்ணுங்க<br>Chart library failed to load — check your internet and refresh</div>';
+    return;
+  }
   if(chartInstances[canvasId]){ chartInstances[canvasId].destroy(); }
-  if(!labels.length){ return; }
-  chartInstances[canvasId] = new Chart(canvasEl.getContext('2d'), {
-    type: 'bar',
-    data: { labels: labels, datasets: [{ label: seriesLabel, data: dataValues, backgroundColor: color, borderRadius: 4 }] },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { autoSkip: false, maxRotation: 55, minRotation: 25, font: { size: 9 } } },
-        y: { beginAtZero: true }
+  if(!labels.length){
+    if(wrapper) wrapper.innerHTML = '<div class="empty">தரவு இல்லை / No data yet</div>';
+    return;
+  }
+  if(!canvasEl.isConnected || !wrapper) return;
+  try{
+    chartInstances[canvasId] = new Chart(canvasEl.getContext('2d'), {
+      type: 'bar',
+      data: { labels: labels, datasets: [{ label: seriesLabel, data: dataValues, backgroundColor: color, borderRadius: 4 }] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { autoSkip: false, maxRotation: 55, minRotation: 25, font: { size: 9 } } },
+          y: { beginAtZero: true }
+        }
       }
-    }
-  });
+    });
+  } catch(e){
+    console.error('Chart render error', canvasId, e);
+    if(wrapper) wrapper.innerHTML = '<div class="empty">Chart காமிக்க முடியல் / Could not render chart</div>';
+  }
 }
 function updateReportChart(id){
   const d = window._reportChartData || {};
-  if(id === 'secTop' && d.top) drawBarChart('chartTop', d.top.labels, d.top.values, 'Units sold', '#0f6e51');
-  if(id === 'secProfit' && d.profit) drawBarChart('chartProfit', d.profit.labels, d.profit.values, 'Profit (₹)', '#e8792b');
-  if(id === 'secStockVal' && d.stockVal) drawBarChart('chartStockVal', d.stockVal.labels, d.stockVal.values, 'Stock value (₹)', '#3454d1');
-  if(id === 'secCustRep' && d.custRep) drawBarChart('chartCustRep', d.custRep.labels, d.custRep.values, 'Total spent (₹)', '#c0392b');
+  // small delay so the section's display:block change is fully laid out
+  // before Chart.js measures the canvas (avoids a zero-size chart)
+  setTimeout(function(){
+    if(id === 'secTop' && d.top) drawBarChart('chartTop', d.top.labels, d.top.values, 'Units sold', '#0f6e51');
+    if(id === 'secProfit' && d.profit) drawBarChart('chartProfit', d.profit.labels, d.profit.values, 'Profit (₹)', '#e8792b');
+    if(id === 'secStockVal' && d.stockVal) drawBarChart('chartStockVal', d.stockVal.labels, d.stockVal.values, 'Stock value (₹)', '#3454d1');
+    if(id === 'secCustRep' && d.custRep) drawBarChart('chartCustRep', d.custRep.labels, d.custRep.values, 'Total spent (₹)', '#c0392b');
+  }, 30);
 }
 
 // ---------- Billing: item search / add ----------
