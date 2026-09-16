@@ -364,6 +364,8 @@
       <div><label>குறைந்த அளவு எச்சரிக்கை / Low stock alert</label><input id="newItemLow" type="number" placeholder="5" value="5"></div>
       <div><label>Barcode <span class="lang-tag">(optional)</span></label><input id="newItemBarcode" placeholder="Scan or type barcode"></div>
     </div>
+    <label>பொருள் படம் / Product Image <span class="lang-tag">(optional, small photo)</span></label>
+    <input type="file" id="newItemImage" accept="image/*">
     <button class="btn-primary" onclick="addProduct()">➕ சேர் / Add Product</button>
   </div>
 
@@ -448,8 +450,9 @@
   <div class="modal">
     <span class="close-x" onclick="closeBillModal()">✕</span>
     <div class="bill-header">
-      <h2>🧾 ழா BILL / ZHA BILL</h2>
-      <div id="modalMeta" style="font-size:.78rem;color:var(--muted);"></div>
+      <h2 id="billHeaderShopName">🧾 ZHA BILL</h2>
+      <div id="billHeaderShopSub" style="font-size:.72rem;color:var(--muted);line-height:1.5;"></div>
+      <div id="modalMeta" style="font-size:.78rem;color:var(--muted);margin-top:6px;"></div>
     </div>
     <table class="bill-table">
       <thead><tr><th>பொருள் / Item</th><th>எண்ணிக்கை<br>Qty</th><th>விலை<br>Price</th><th>கூட்டு<br>Amt</th></tr></thead>
@@ -482,12 +485,17 @@
 // ---------- Storage helpers ----------
 const LS_PRODUCTS = 'kb_products';
 const LS_BILLS = 'kb_bills';
+const LS_SHOP = 'kb_shop_settings';
+const DEFAULT_SHOP_SETTINGS = { name:'ZHA BILL', address:'', gst:'', phone:'' };
 
 function loadProducts(){
   try{ return JSON.parse(localStorage.getItem(LS_PRODUCTS)) || []; }catch(e){ return []; }
 }
 function loadBills(){
   try{ return JSON.parse(localStorage.getItem(LS_BILLS)) || []; }catch(e){ return []; }
+}
+function loadShopSettingsLocal(){
+  try{ return Object.assign({}, DEFAULT_SHOP_SETTINGS, JSON.parse(localStorage.getItem(LS_SHOP)) || {}); }catch(e){ return Object.assign({}, DEFAULT_SHOP_SETTINGS); }
 }
 
 // ---------- Firebase (cloud database) ----------
@@ -556,6 +564,14 @@ function startCloudSync(){
   }, function(err){
     console.error('bills sync error', err);
   });
+
+  db.collection('zha_bill_store').doc('shop_settings').onSnapshot(function(doc){
+    if(doc.exists){
+      shopSettings = Object.assign({}, DEFAULT_SHOP_SETTINGS, doc.data());
+      localStorage.setItem(LS_SHOP, JSON.stringify(shopSettings));
+      renderShopHeader();
+    }
+  }, function(err){ console.error('shop settings sync error', err); });
 }
 
 function refreshVisibleScreen(){
@@ -579,9 +595,21 @@ function saveBills(b){
   localStorage.setItem(LS_BILLS, JSON.stringify(b));
   if(db){ db.collection('zha_bill_store').doc('bills').set({ list: b, updatedAt: new Date().toISOString() }).catch(function(e){ console.error('cloud save (bills) failed', e); }); }
 }
+function renderShopHeader(){
+  const nameEl = document.getElementById('billHeaderShopName');
+  const subEl = document.getElementById('billHeaderShopSub');
+  if(!nameEl) return;
+  nameEl.textContent = '🧾 ' + (shopSettings.name || 'ZHA BILL');
+  const parts = [];
+  if(shopSettings.address) parts.push(escapeHtml(shopSettings.address));
+  if(shopSettings.gst) parts.push('GSTIN: ' + escapeHtml(shopSettings.gst));
+  if(shopSettings.phone) parts.push('Ph: ' + escapeHtml(shopSettings.phone));
+  subEl.innerHTML = parts.join('<br>');
+}
 
 let products = loadProducts();
 let bills = loadBills();
+let shopSettings = loadShopSettingsLocal();
 let currentBillItems = []; // {id,name,price,qty}
 let editingBillId = null; // set when editing an existing bill from history
 let selectedPayMethods = []; // ['Cash','UPI',...] in click order
@@ -758,9 +786,12 @@ function renderSearchResults(){
   if(matches.length===0){ box.innerHTML = '<div class="empty">பொருள் இல்லை / No match</div>'; return; }
   box.innerHTML = matches.map(p=>`
     <div class="item-row">
-      <div>
-        <div class="item-name">${p.name}</div>
-        <div class="item-sub">₹${p.price} · ஸ்டாக்: ${p.stock}</div>
+      <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+        ${productThumbHtml(p,36)}
+        <div style="min-width:0;">
+          <div class="item-name">${escapeHtml(p.name)}</div>
+          <div class="item-sub">₹${p.price} · ஸ்டாக்: ${p.stock}</div>
+        </div>
       </div>
       <button class="btn-accent btn-small" onclick="addToBill('${p.id}')">+ சேர்</button>
     </div>
@@ -897,11 +928,15 @@ function renderBillItems(){
   box.innerHTML = currentBillItems.map(it=>{
     const amt = it.price*it.qty;
     subtotal += amt;
+    const p = products.find(x=>x.id===it.id) || {};
     return `
     <div class="item-row">
-      <div>
-        <div class="item-name">${it.name}</div>
-        <div class="item-sub">₹${it.price} × ${it.qty} = ₹${amt}</div>
+      <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+        ${productThumbHtml(p,36)}
+        <div style="min-width:0;">
+          <div class="item-name">${escapeHtml(it.name)}</div>
+          <div class="item-sub">₹${it.price} × ${it.qty} = ₹${amt}</div>
+        </div>
       </div>
       <div class="qty-box">
         <button onclick="changeQty('${it.id}',-1)">−</button>
@@ -1046,8 +1081,11 @@ function formatCashChange(bill){
 
 // ---------- WhatsApp bill sending (opens wa.me with message pre-filled; user taps Send) ----------
 function buildWhatsAppMessage(bill){
-  let msg = `🧾 *ZHA BILL*\n`;
-  msg += `Customer: ${bill.customer}\n`;
+  let msg = `🧾 *${shopSettings.name || 'ZHA BILL'}*\n`;
+  if(shopSettings.address) msg += `${shopSettings.address}\n`;
+  if(shopSettings.gst) msg += `GSTIN: ${shopSettings.gst}\n`;
+  if(shopSettings.phone) msg += `Ph: ${shopSettings.phone}\n`;
+  msg += `\nCustomer: ${bill.customer}\n`;
   msg += `Date: ${new Date(bill.date).toLocaleString()}\n\n`;
   bill.items.forEach(it=>{
     msg += `${it.name} x${it.qty} = ₹${it.price*it.qty}\n`;
@@ -1078,6 +1116,7 @@ function sendBillOnWhatsApp(bill){
 
 function showBillModal(bill){
   window._currentModalBill = bill;
+  renderShopHeader();
   const payLabel = formatPayment(bill.payment);
   const changeLabel = formatCashChange(bill);
   document.getElementById('modalMeta').innerHTML =
@@ -1102,7 +1141,35 @@ function closeBillModal(){ document.getElementById('billModalBg').classList.remo
 function printBill(){ window.print(); }
 
 // ---------- Stock screen ----------
-function addProduct(){
+function resizeImageToDataUrl(file, maxDim){
+  return new Promise(function(resolve, reject){
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const img = new Image();
+      img.onload = function(){
+        let w = img.width, h = img.height;
+        if(w > h){ if(w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; } }
+        else { if(h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; } }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.72));
+      };
+      img.onerror = function(){ reject(new Error('image load failed')); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function(){ reject(new Error('file read failed')); };
+    reader.readAsDataURL(file);
+  });
+}
+function productThumbHtml(p, size){
+  size = size || 40;
+  if(p.image){
+    return `<img src="${p.image}" style="width:${size}px;height:${size}px;object-fit:cover;border-radius:8px;flex-shrink:0;">`;
+  }
+  return `<div style="width:${size}px;height:${size}px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:${Math.round(size*0.55)}px;flex-shrink:0;">📦</div>`;
+}
+async function addProduct(){
   const name = document.getElementById('newItemName').value.trim();
   const price = parseFloat(document.getElementById('newItemPrice').value);
   const costInput = document.getElementById('newItemCost').value;
@@ -1114,7 +1181,13 @@ function addProduct(){
   if(barcode && products.some(p=>p.barcode===barcode)){
     toast('இந்த Barcode ஏற்கனவே இருக்கு / Barcode already used'); return;
   }
-  products.push({id:'p'+Date.now(),name,price,cost,stock,low,barcode});
+  const imageInput = document.getElementById('newItemImage');
+  let image = null;
+  if(imageInput && imageInput.files && imageInput.files[0]){
+    try{ image = await resizeImageToDataUrl(imageInput.files[0], 200); }
+    catch(e){ console.error('image resize failed', e); toast('படம் சேர்க்க முடியல் / Could not add image, product saved without it'); }
+  }
+  products.push({id:'p'+Date.now(),name,price,cost,stock,low,barcode,image});
   saveProducts(products);
   document.getElementById('newItemName').value='';
   document.getElementById('newItemPrice').value='';
@@ -1122,6 +1195,7 @@ function addProduct(){
   document.getElementById('newItemStock').value='';
   document.getElementById('newItemLow').value='5';
   document.getElementById('newItemBarcode').value='';
+  if(imageInput) imageInput.value='';
   renderStock();
   toast('பொருள் சேர்க்கப்பட்டது / Product added');
 }
@@ -1147,9 +1221,12 @@ function renderStock(){
   if(list.length===0){ box.innerHTML = '<div class="empty">பொருட்கள் இல்லை / No products</div>'; return; }
   box.innerHTML = list.map(p=>`
     <div class="item-row">
-      <div>
-        <div class="item-name">${p.name} ${p.stock<=p.low?'<span class="badge badge-low">குறைவு/LOW</span>':'<span class="badge badge-ok">OK</span>'}</div>
-        <div class="item-sub">₹${p.price}${(p.cost!==null && p.cost!==undefined) ? (' · Cost: ₹'+p.cost) : ''} · ஸ்டாக்: ${p.stock}${p.barcode ? (' · #'+p.barcode) : ''}</div>
+      <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+        ${productThumbHtml(p,42)}
+        <div style="min-width:0;">
+          <div class="item-name">${escapeHtml(p.name)} ${p.stock<=p.low?'<span class="badge badge-low">குறைவு/LOW</span>':'<span class="badge badge-ok">OK</span>'}</div>
+          <div class="item-sub">₹${p.price}${(p.cost!==null && p.cost!==undefined) ? (' · Cost: ₹'+p.cost) : ''} · ஸ்டாக்: ${p.stock}${p.barcode ? (' · #'+escapeHtml(p.barcode)) : ''}</div>
+        </div>
       </div>
       <div class="qty-box">
         <button onclick="adjustStock('${p.id}',-1)">−</button>
@@ -1615,6 +1692,7 @@ function renderDashboard(){
 
 // initial render
 renderStock();
+renderShopHeader();
 
 // connect to cloud database (if firebase-config.js has been filled in)
 if(initFirebase()){ startCloudSync(); }
