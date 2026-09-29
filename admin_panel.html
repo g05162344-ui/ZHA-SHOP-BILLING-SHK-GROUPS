@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>ZHA BILL | Admin Panel</title>
+<script>try{var t=localStorage.getItem('kb_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <style>
   :root{
     --primary:#0f6e51;
@@ -23,7 +24,6 @@
     font-family:'Segoe UI',Noto Sans Tamil,Arial,sans-serif;
     background:var(--bg);
     color:var(--text);
-    padding-bottom:30px;
   }
   /* ---------- Login screen ---------- */
   .login-wrap{
@@ -75,7 +75,8 @@
   }
   .sidebar .sb-head span{display:block;font-weight:400;font-size:.7rem;opacity:.85;margin-top:2px;}
   .sb-item{
-    padding:13px 18px;font-size:.88rem;font-weight:600;color:var(--text);
+    padding:17px 18px;min-height:52px;font-size:.9rem;font-weight:600;color:var(--text);
+    touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background .1s ease;
     cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;
   }
   .sb-item .lang-tag{font-weight:400;color:var(--muted);font-size:.68rem;display:block;}
@@ -91,26 +92,48 @@
   .card h3 .lang-tag{font-weight:400;}
   label{font-size:.78rem;color:var(--muted);display:block;margin-bottom:4px;}
   input,select{
-    width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:8px;
-    font-size:.9rem;margin-bottom:10px;background:#fbfdfc;
+    width:100%;padding:12px 12px;min-height:46px;border:1px solid var(--border);border-radius:8px;
+    font-size:1rem;margin-bottom:10px;background:#fbfdfc;box-sizing:border-box;
   }
   input:focus,select:focus{outline:none;border-color:var(--primary);}
+  input[type=checkbox],input[type=radio]{width:auto;min-height:0;}
   .row{display:flex;gap:8px;}
   .row > div{flex:1;}
-  button{border:none;border-radius:8px;padding:11px 14px;font-size:.88rem;font-weight:600;cursor:pointer;}
+  button{
+    border:none;border-radius:8px;padding:12px 16px;min-height:46px;font-size:.9rem;font-weight:600;cursor:pointer;
+    touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .08s ease,opacity .08s ease;
+  }
+  button:active{transform:scale(.96);opacity:.85;}
   .btn-primary{background:var(--primary);color:#fff;width:100%;}
   .btn-accent{background:var(--accent);color:#fff;}
   .btn-accent2{background:var(--accent2);color:#fff;}
   .btn-outline{background:#fff;color:var(--primary);border:1px solid var(--primary);}
   .btn-danger-outline{background:#fff;color:var(--danger);border:1px solid var(--danger);}
-  .btn-danger{background:none;color:var(--danger);padding:8px 10px;font-size:.95rem;display:inline-flex;align-items:center;justify-content:center;min-width:34px;min-height:34px;}
-  .btn-small{padding:7px 10px;font-size:.78rem;}
+  .btn-danger{background:none;color:var(--danger);padding:8px 10px;font-size:1.05rem;display:inline-flex;align-items:center;justify-content:center;min-width:40px;min-height:40px;}
+  .btn-small{padding:10px 14px;min-height:40px;font-size:.8rem;}
+  .rep-chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .rep-chips::-webkit-scrollbar{display:none;}
+  .rep-chip{
+    flex:0 0 auto;padding:11px 16px;min-height:40px;border-radius:999px;background:var(--card);border:1px solid var(--border);
+    color:var(--muted);font-size:.8rem;font-weight:600;display:inline-flex;align-items:center;
+    touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .08s ease;
+  }
+  .rep-chip:hover{border-color:var(--primary);color:var(--primary-dark);}
+  .rep-chip:active{transform:scale(.95);}
+  .rep-chip.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .rep-chip-sep{flex:0 0 1px;background:var(--border);margin:2px 2px;}
+  .rep-custom{display:none;gap:8px;margin-top:10px;}
+  .rep-custom > div{flex:1;min-width:0;}
+  .rep-custom input{margin-bottom:0;}
+  .rangebar{width:100%;margin-bottom:10px;}
+  .rangebar .rep-range-note{margin-top:8px;}
+  .rep-range-note{margin-top:10px;padding:8px 10px;background:var(--tint);border-radius:8px;color:var(--primary-dark);font-size:.76rem;font-weight:600;}
   .item-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:8px;}
   .item-row:last-child{border-bottom:none;}
   .item-name{font-weight:600;font-size:.88rem;}
   .item-sub{font-size:.72rem;color:var(--muted);}
   .qty-box{display:flex;align-items:center;gap:6px;}
-  .qty-box button{width:28px;height:28px;padding:0;background:var(--border);color:var(--text);font-size:1rem;line-height:1;}
+  .qty-box button{width:36px;height:36px;min-height:36px;padding:0;background:var(--border);color:var(--text);font-size:1rem;line-height:1;}
   .total-bar{display:flex;justify-content:space-between;font-size:1rem;font-weight:700;padding-top:10px;margin-top:6px;border-top:2px dashed var(--border);}
   .empty{text-align:center;color:var(--muted);padding:26px 10px;font-size:.85rem;}
   .badge{font-size:.65rem;padding:2px 7px;border-radius:20px;font-weight:700;}
@@ -134,8 +157,9 @@
   .stat span{font-size:.66rem;color:var(--muted);}
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 18px;border-radius:20px;font-size:.82rem;z-index:100;display:none;}
   .lang-tag{font-size:.68rem;color:var(--muted);}
-  .pay-options{display:flex;gap:8px;}
-  .pay-btn{flex:1;text-align:center;padding:12px 6px;border:1.5px solid var(--border);border-radius:10px;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--text);background:#fbfdfc;}
+  body.lang-ta-only .lang-tag{display:none !important;}
+  .pay-options{display:flex;gap:12px;}
+  .pay-btn{flex:1;text-align:center;padding:18px 10px;min-height:64px;border:1.5px solid var(--border);border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer;color:var(--text);background:#fbfdfc;}
   .pay-btn.selected{border-color:var(--primary);background:#e8f5f0;color:var(--primary-dark);}
   .split-row{display:flex;align-items:center;gap:8px;margin-top:10px;}
   .split-row span{flex:0 0 70px;font-size:.82rem;font-weight:600;}
@@ -157,10 +181,379 @@
   .pay-stat.upi{background:#eaf6f2;border-color:#a9d9c9;}
   .pay-stat.card{background:#eef1fb;border-color:#b9c3ec;}
   .pay-stat.multi{background:#fdeeee;border-color:#eac1c1;}
+
+  /* ---- POS-style left/right layout ---- */
+  .pos-table-head{
+    display:flex;justify-content:space-between;gap:10px;
+    padding:0 2px 8px;margin-bottom:6px;
+    border-bottom:1px solid var(--border);
+    font-size:.68rem;font-weight:700;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.03em;
+  }
+  .pos-table-head span:first-child{text-align:left;}
+  .pos-table-head span:last-child{text-align:right;}
+  #billItems{max-height:200px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .pos-topbar{display:flex;gap:12px;align-items:stretch;margin-bottom:10px;flex-wrap:wrap;}
+  .pos-topbar-field{
+    display:flex;align-items:center;gap:8px;
+    background:var(--card);border:1px solid var(--border);border-radius:10px;
+    padding:8px 12px;
+  }
+  .pos-topbar-cust{flex:0 0 300px;}
+  .pos-topbar-search{flex:1;min-width:260px;}
+  .pos-icon{font-size:1rem;opacity:.7;flex:0 0 auto;}
+  .pos-topbar-inputs{flex:1;display:flex;flex-direction:column;min-width:0;}
+  .pos-topbar-field input{border:none;padding:2px 0;outline:none;background:transparent;width:100%;}
+  .pos-topbar-field input#custName{font-weight:600;}
+  .pos-topbar-field input.pos-sub-input{font-size:.76rem;color:var(--muted);padding-top:0;}
+  .pos-topbar-search button{flex:0 0 auto;}
+  /* flat full-width totals footer bar */
+  .pos-summary-footer{
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+    gap:14px;background:#f3f6f5;border:1px solid var(--border);border-radius:10px;
+    padding:12px 16px;margin-bottom:12px;
+  }
+  .pos-summary-stat{text-align:left;}
+  .pos-summary-stat span{display:block;font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
+  .pos-summary-stat b{display:block;font-size:1.05rem;color:var(--text);margin-top:2px;}
+  .pos-summary-stat.pos-summary-total b{font-size:1.35rem;color:var(--primary-dark);}
+  .pos-summary-discount{display:flex;align-items:center;gap:8px;}
+  .pos-summary-discount span{margin:0;}
+  .pos-summary-discount input{width:70px;padding:6px 8px;margin:0;}
+  #billItems::-webkit-scrollbar{width:7px;}
+  #billItems::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+  #billItems::-webkit-scrollbar-thumb:hover{background:var(--muted);}
+  .pos-actions-bar{
+    display:flex;gap:10px;margin-top:4px;
+  }
+  .pos-actions-bar button{flex:1;margin-top:0;}
   .collapsible-h{cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+  .dash-card-header{display:inline-block;background:#eef1f0;color:var(--text);font-weight:700;font-size:.82rem;padding:8px 16px;border-radius:20px;margin-bottom:12px;}
+  .dash-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .dash-row > .card{flex:1 1 300px;min-width:0;}
+  @media(min-width:900px){
+    .hamb, .sidebar-overlay{ display:none !important; }
+    .sidebar{ left:0 !important; box-shadow:none; border-right:1px solid var(--border); }
+    header{ margin-left:250px; }
+    .screen{ margin-left:270px; margin-right:0; max-width:none; width:calc(100% - 270px); padding:20px 28px; }
+  }
   .edit-box{background:#fbfdfc;border:1px dashed var(--border);border-radius:10px;padding:10px;margin-top:8px;}
   @media(min-width:700px){ .stat{flex:1 1 22%;} }
   @media print{ header,.sidebar,.sidebar-overlay,.card:not(.print-only){display:none !important;} }
+
+  /* =====================================================================
+     SMART UI POLISH — softer depth, smoother interactions, cleaner forms.
+     (Appended last so it refines the base styles above without changing
+     any layout or behaviour.)
+     ===================================================================== */
+  :root{
+    --primary:#0f7a5a; --primary-dark:#0a5240;
+    --bg:#f2f5f4; --border:#e2e9e7;
+    --radius:14px; --radius-sm:10px;
+    --shadow-sm:0 1px 2px rgba(16,40,32,.06), 0 2px 8px rgba(16,40,32,.05);
+    --shadow-md:0 4px 14px rgba(16,40,32,.10);
+    --ease:cubic-bezier(.2,.7,.3,1);
+  }
+  html{-webkit-tap-highlight-color:transparent;scroll-behavior:smooth;}
+  body{
+    background:linear-gradient(180deg,#eef4f2 0,var(--bg) 220px);
+    -webkit-font-smoothing:antialiased;
+    letter-spacing:.005em;
+  }
+  ::selection{background:rgba(15,122,90,.18);}
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-thumb{background:#c9d6d2;border-radius:10px;}
+  ::-webkit-scrollbar-thumb:hover{background:#a9bbb6;}
+
+  /* header */
+  header{
+    background:linear-gradient(120deg,var(--primary) 0%,var(--primary-dark) 100%);
+    box-shadow:0 4px 18px rgba(10,82,64,.28);
+    backdrop-filter:saturate(1.2);
+  }
+  header h1{letter-spacing:.02em;}
+
+  /* cards */
+  .card{
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-sm);
+    border:1px solid var(--border);
+    transition:box-shadow .25s var(--ease), transform .25s var(--ease);
+  }
+  .card:hover{box-shadow:var(--shadow-md);}
+  .card h3{
+    display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+    font-size:.98rem;letter-spacing:.01em;
+    padding-bottom:8px;margin-bottom:12px;
+    border-bottom:1px solid var(--border);
+  }
+
+  /* form controls */
+  label{font-weight:600;letter-spacing:.01em;}
+  input,select,textarea{
+    border:1.5px solid var(--border);
+    border-radius:var(--radius-sm);
+    background:#fff;
+    transition:border-color .18s var(--ease), box-shadow .18s var(--ease), background .18s;
+  }
+  input:hover,select:hover{border-color:#c4d3cf;}
+  input:focus,select:focus,textarea:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 4px rgba(15,122,90,.13);
+    background:#fff;
+  }
+  input::placeholder{color:#a3b1ad;}
+  input[type=checkbox]{accent-color:var(--primary);}
+
+  /* buttons */
+  button{
+    border-radius:var(--radius-sm);
+    transition:transform .12s var(--ease), box-shadow .2s var(--ease), filter .2s, background .2s;
+  }
+  button:active{transform:scale(.97);}
+  .btn-primary{
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    box-shadow:0 3px 10px rgba(15,122,90,.28);
+  }
+  .btn-primary:hover{filter:brightness(1.07);box-shadow:0 5px 14px rgba(15,122,90,.34);}
+  .btn-accent{box-shadow:0 3px 10px rgba(232,121,43,.28);}
+  .btn-accent:hover,.btn-accent2:hover{filter:brightness(1.07);}
+  .btn-outline:hover{background:#eaf6f2;}
+  .btn-danger-outline:hover{background:#fdecea;}
+  .btn-danger:hover{background:#fdecea;border-radius:8px;}
+  .qty-box button{border-radius:8px;transition:background .15s, transform .12s;}
+  .qty-box button:hover{background:#d3e4df;}
+
+  /* lists */
+  .item-row{transition:background .15s;border-radius:8px;padding-left:4px;padding-right:4px;}
+  .item-row:hover{background:#f6faf9;}
+  .item-name{letter-spacing:.005em;}
+
+  /* stat tiles */
+  .stat{
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-sm);
+    border:1px solid var(--border);
+    background:linear-gradient(180deg,#fff,#f8fbfa);
+    transition:transform .2s var(--ease), box-shadow .2s var(--ease);
+  }
+  .stat:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+  .stat b{font-size:1.2rem;letter-spacing:.01em;}
+
+  /* payment buttons */
+  .pay-btn{
+    border-radius:var(--radius);
+    transition:all .18s var(--ease);
+  }
+  .pay-btn:hover{border-color:var(--primary);transform:translateY(-1px);box-shadow:var(--shadow-sm);}
+  .pay-btn.selected{
+    background:linear-gradient(135deg,#e6f5ef,#d6efe6);
+    box-shadow:0 0 0 3px rgba(15,122,90,.15), var(--shadow-sm);
+  }
+
+  /* badges */
+  .badge{letter-spacing:.02em;}
+
+  /* modal + toast */
+  .modal-bg{backdrop-filter:blur(3px);}
+  .modal{
+    border-radius:20px 20px 0 0;
+    box-shadow:0 -8px 30px rgba(0,0,0,.18);
+    animation:slideUp .28s var(--ease);
+  }
+  @keyframes slideUp{from{transform:translateY(24px);opacity:0;}to{transform:none;opacity:1;}}
+  .toast{
+    background:rgba(28,43,40,.94);
+    box-shadow:0 8px 24px rgba(0,0,0,.25);
+    backdrop-filter:blur(6px);
+    border-radius:24px;
+    animation:toastIn .25s var(--ease);
+  }
+  @keyframes toastIn{from{transform:translate(-50%,10px);opacity:0;}to{transform:translate(-50%,0);opacity:1;}}
+
+  /* screens fade in when switched */
+  .screen.active{animation:screenIn .28s var(--ease);}
+  @keyframes screenIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  /* navigation (admin sidebar + staff tabs) */
+  .sb-item{transition:background .15s, color .15s, padding-left .15s var(--ease);border-radius:0 24px 24px 0;margin-right:10px;}
+  .sb-item:hover{background:#f1f8f5;padding-left:22px;}
+  .sb-item.active{
+    background:linear-gradient(90deg,#e3f4ed,#eef8f4);
+    box-shadow:inset 4px 0 0 var(--primary);
+    font-weight:700;
+  }
+  .sidebar{box-shadow:6px 0 24px rgba(0,0,0,.12);}
+  .tab{transition:color .15s, background .15s, border-color .2s;}
+  .tab:hover{background:#f4faf8;}
+  .tab.active{background:linear-gradient(180deg,#fff,#f0f8f5);}
+  .more-item{transition:background .15s;}
+  .more-item:hover{background:#f4faf8;}
+
+  /* reduce motion for people who prefer it */
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important;transition:none !important;scroll-behavior:auto !important;}
+  }
+
+  /* =====================================================================
+     COLOUR THEMES — pick one in Admin Panel > Settings. The choice is saved
+     in the browser and applies to both the Admin Panel and the Billing page.
+     ===================================================================== */
+  :root{
+    --tint:#eaf6f2; --tint2:#dcf0e8;
+    --ring:rgba(15,122,90,.14); --ring2:rgba(15,122,90,.30);
+  }
+  :root[data-theme="ocean"]{
+    --primary:#1769c2; --primary-dark:#0d4a8f; --accent:#f0932b; --accent2:#6c3fc5;
+    --bg:#f0f4fa; --border:#dce5f0; --tint:#e8f1fb; --tint2:#d7e6f8;
+    --ring:rgba(23,105,194,.14); --ring2:rgba(23,105,194,.30);
+  }
+  :root[data-theme="royal"]{
+    --primary:#6a3fc4; --primary-dark:#4a2a92; --accent:#e8792b; --accent2:#1769c2;
+    --bg:#f5f2fb; --border:#e4dcf2; --tint:#f0eafb; --tint2:#e2d7f6;
+    --ring:rgba(106,63,196,.14); --ring2:rgba(106,63,196,.30);
+  }
+  :root[data-theme="rose"]{
+    --primary:#c2255c; --primary-dark:#8f1a43; --accent:#f08c1b; --accent2:#6a3fc4;
+    --bg:#fbf1f5; --border:#f0dce4; --tint:#fbe9f0; --tint2:#f6d6e2;
+    --ring:rgba(194,37,92,.14); --ring2:rgba(194,37,92,.30);
+  }
+  :root[data-theme="teal"]{
+    --primary:#0e7c86; --primary-dark:#095860; --accent:#e8792b; --accent2:#3454d1;
+    --bg:#eff6f7; --border:#d9e7e9; --tint:#e4f4f5; --tint2:#d0ebed;
+    --ring:rgba(14,124,134,.14); --ring2:rgba(14,124,134,.30);
+  }
+  :root[data-theme="charcoal"]{
+    --primary:#3b4a5a; --primary-dark:#232d38; --accent:#e8a12b; --accent2:#3454d1;
+    --bg:#f3f4f6; --border:#e0e4e9; --tint:#eceff3; --tint2:#dde2e9;
+    --ring:rgba(59,74,90,.16); --ring2:rgba(59,74,90,.32);
+  }
+  body{background:linear-gradient(180deg,var(--tint) 0,var(--bg) 220px);}
+  input:focus,select:focus,textarea:focus{box-shadow:0 0 0 4px var(--ring);}
+  .btn-primary{box-shadow:0 3px 10px var(--ring2);}
+  .btn-primary:hover{box-shadow:0 5px 14px var(--ring2);}
+  .btn-outline:hover{background:var(--tint);}
+  .pay-btn.selected{background:linear-gradient(135deg,var(--tint),var(--tint2));box-shadow:0 0 0 3px var(--ring), var(--shadow-sm);}
+  .sb-item.active{background:linear-gradient(90deg,var(--tint2),var(--tint));}
+  .sb-item:hover{background:var(--tint);}
+  .sb-item:active{background:var(--tint);}
+  .tab.active{background:linear-gradient(180deg,#fff,var(--tint));}
+  .tab:hover,.more-item:hover,.item-row:hover{background:var(--tint);}
+  .stat{background:linear-gradient(180deg,#fff,var(--tint));}
+  .pos-summary-footer{background:var(--tint);}
+  ::selection{background:var(--ring2);}
+  .theme-swatches{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;}
+  .theme-swatch{
+    display:flex;flex-direction:column;align-items:center;gap:5px;
+    padding:8px 10px;border:2px solid var(--border);border-radius:12px;background:#fff;
+    font-size:.7rem;font-weight:600;color:var(--text);cursor:pointer;min-width:66px;
+  }
+  .theme-swatch i{display:block;width:34px;height:34px;border-radius:50%;box-shadow:inset 0 0 0 3px rgba(255,255,255,.55);}
+  .theme-swatch.on{border-color:var(--primary);box-shadow:0 0 0 3px var(--ring);}
+
+  /* ---- MIDNIGHT (black + blue) dark theme ---- */
+  :root[data-theme="midnight"]{
+    color-scheme:dark;
+    --primary:#2f8cff; --primary-dark:#8cc4ff; --accent:#ffa53d; --accent2:#7c8cff;
+    --bg:#05080d; --card:#0e1520; --text:#e6edf6; --muted:#8ea3bb; --border:#1f2e42;
+    --danger:#ff6b5e;
+    --tint:#0c1a2e; --tint2:#12294a;
+    --ring:rgba(47,140,255,.22); --ring2:rgba(47,140,255,.38);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.5), 0 2px 10px rgba(0,0,0,.35);
+    --shadow-md:0 6px 18px rgba(0,0,0,.55);
+  }
+  :root[data-theme="midnight"] body{background:linear-gradient(180deg,#0a1626 0,#05080d 260px);}
+  :root[data-theme="midnight"] header{background:linear-gradient(120deg,#000 0%,#08234d 55%,#1257b5 100%);box-shadow:0 4px 20px rgba(0,0,0,.6);}
+  :root[data-theme="midnight"] .btn-primary{background:linear-gradient(135deg,#2f8cff,#1257b5);color:#fff;}
+  :root[data-theme="midnight"] .card h3{color:#8cc4ff;}
+  :root[data-theme="midnight"] .stat b,
+  :root[data-theme="midnight"] .pos-summary-stat.pos-summary-total b{color:#8cc4ff;}
+  :root[data-theme="midnight"] .stat{background:linear-gradient(180deg,#111b29,#0c1a2e);}
+  :root[data-theme="midnight"] .login-card,
+  :root[data-theme="midnight"] .sidebar,
+  :root[data-theme="midnight"] .modal,
+  :root[data-theme="midnight"] .tabs,
+  :root[data-theme="midnight"] .more-menu,
+  :root[data-theme="midnight"] .theme-swatch,
+  :root[data-theme="midnight"] .edit-box,
+  :root[data-theme="midnight"] .btn-outline,
+  :root[data-theme="midnight"] .btn-danger-outline{background:var(--card);color:var(--text);}
+  :root[data-theme="midnight"] .btn-outline{color:#8cc4ff;border-color:#2f8cff;}
+  :root[data-theme="midnight"] .btn-danger-outline{color:var(--danger);}
+  :root[data-theme="midnight"] .btn-outline:hover{background:var(--tint2);}
+  :root[data-theme="midnight"] .btn-danger-outline:hover,
+  :root[data-theme="midnight"] .btn-danger:hover{background:#2a1512;}
+  :root[data-theme="midnight"] input,
+  :root[data-theme="midnight"] select,
+  :root[data-theme="midnight"] textarea,
+  :root[data-theme="midnight"] input:focus,
+  :root[data-theme="midnight"] select:focus,
+  :root[data-theme="midnight"] textarea:focus{background:#0a111a;color:var(--text);}
+  :root[data-theme="midnight"] input::placeholder{color:#5d7189;}
+  :root[data-theme="midnight"] input:hover,
+  :root[data-theme="midnight"] select:hover{border-color:#2d4260;}
+  :root[data-theme="midnight"] .pos-topbar-field{background:var(--card);}
+  :root[data-theme="midnight"] .pos-topbar-field input{background:transparent;}
+  :root[data-theme="midnight"] .pay-btn,
+  :root[data-theme="midnight"] .pay-stat{background:#0a111a;color:var(--text);}
+  :root[data-theme="midnight"] .pay-btn.selected{background:linear-gradient(135deg,#0f2748,#143a6b);color:#fff;border-color:#2f8cff;}
+  :root[data-theme="midnight"] .pay-stat.cash{background:#2a2110;}
+  :root[data-theme="midnight"] .pay-stat.upi{background:#0f2a22;}
+  :root[data-theme="midnight"] .pay-stat.card{background:#141c33;}
+  :root[data-theme="midnight"] .pay-stat.multi{background:#2a1416;}
+  :root[data-theme="midnight"] .change-box{background:#2a2110;color:#ffd58a;}
+  :root[data-theme="midnight"] .badge-low{background:#3a1a17;color:#ff8f84;}
+  :root[data-theme="midnight"] .badge-ok{background:#0f2a22;color:#6fe0b0;}
+  :root[data-theme="midnight"] .dash-card-header{background:#122033;color:var(--text);}
+  :root[data-theme="midnight"] .pos-summary-footer{background:var(--tint);}
+  :root[data-theme="midnight"] .qty-box button{background:#1a2a40;color:var(--text);}
+  :root[data-theme="midnight"] .qty-box button:hover{background:#243a58;}
+  :root[data-theme="midnight"] .item-row:hover,
+  :root[data-theme="midnight"] .tab:hover,
+  :root[data-theme="midnight"] .more-item:hover,
+  :root[data-theme="midnight"] .sb-item:hover{background:#0f2036;}
+  :root[data-theme="midnight"] .sb-item{color:var(--text);}
+  :root[data-theme="midnight"] .sb-item.active{background:linear-gradient(90deg,#12294a,#0c1a2e);color:#8cc4ff;}
+  :root[data-theme="midnight"] .tab{color:var(--muted);}
+  :root[data-theme="midnight"] .tab.active{background:linear-gradient(180deg,#0e1520,#12294a);color:#8cc4ff;}
+  :root[data-theme="midnight"] .toast{background:rgba(230,237,246,.96);color:#05080d;}
+  :root[data-theme="midnight"] .modal-bg{background:rgba(0,0,0,.7);}
+  :root[data-theme="midnight"] .cam-modal{background:rgba(0,0,0,.75);}
+  :root[data-theme="midnight"] ::-webkit-scrollbar-thumb{background:#243650;}
+  :root[data-theme="midnight"] ::-webkit-scrollbar-thumb:hover{background:#34507a;}
+  /* keep printed bills readable on paper */
+  @media print{
+    :root[data-theme="midnight"]{--card:#fff;--text:#000;--muted:#444;--border:#ccc;--bg:#fff;}
+    :root[data-theme="midnight"] body{background:#fff !important;}
+    :root[data-theme="midnight"] .modal{background:#fff !important;color:#000 !important;}
+  }
+
+  /* payment options: compact, left-aligned */
+  .pay-options{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:8px;}
+  .pay-options .pay-btn{flex:0 0 auto;min-width:78px;min-height:0;padding:8px 14px;font-size:.82rem;border-radius:10px;line-height:1.25;}
+
+  /* payment options on the left, cash/change box on the right */
+  .pay-row{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .pay-row .pay-options{flex:0 0 auto;}
+  .pay-row #cashChangeBox{flex:1 1 220px;max-width:340px;margin-left:auto;}
+  .pay-row #cashChangeBox .change-box{margin-top:0;}
+  .pay-row #cashChangeBox:empty{display:none;}
+
+  /* customer name / phone: clearly visible, editable boxes */
+  .pos-topbar-cust{flex:0 0 340px;align-items:flex-start;}
+  .pos-topbar-cust .pos-icon{margin-top:22px;}
+  .pos-topbar-cust .pos-topbar-inputs{gap:6px;}
+  .pos-topbar-cust label{margin:0 0 2px;font-size:.7rem;}
+  .pos-topbar-field.pos-topbar-cust input,
+  .pos-topbar-field.pos-topbar-cust input:focus{
+    border:1.5px solid var(--border);border-radius:var(--radius-sm,10px);
+    padding:8px 10px;margin:0;background:var(--card,#fff);font-size:.88rem;font-weight:500;color:var(--text);
+  }
+  .pos-topbar-field.pos-topbar-cust input:focus{border-color:var(--primary);}
+  .pos-topbar-field.pos-topbar-cust input.pos-sub-input{font-size:.88rem;color:var(--text);}
+  :root[data-theme="midnight"] .pos-topbar-field.pos-topbar-cust input,
+  :root[data-theme="midnight"] .pos-topbar-field.pos-topbar-cust input:focus{background:#0a111a;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
@@ -197,7 +590,6 @@
     </div>
     <button class="logout-btn" onclick="logout()">⏻ Logout</button>
   </header>
-  <div id="cloudStatus" style="background:#fff8ec;color:#7a5b1e;font-size:.7rem;text-align:center;padding:5px 10px;border-bottom:1px solid #f3d9a8;"></div>
 
   <div class="sidebar-overlay" id="sbOverlay"></div>
   <div class="sidebar" id="sidebar">
@@ -208,28 +600,77 @@
     <div class="sb-item" data-tab="history">📜 பில் வரலாறு <span class="lang-tag">Bill History</span></div>
     <div class="sb-item" data-tab="customers">👤 வாடிக்கையாளர்கள் <span class="lang-tag">Customers</span></div>
     <div class="sb-item" data-tab="reports">📈 அறிக்கைகள் <span class="lang-tag">Sales & Reports</span></div>
-    <div class="sb-item" data-tab="backup">💾 Backup & Data</div>
+    <div class="sb-item" data-tab="expenses">💰 வரவு & செலவு <span class="lang-tag">Income & Expenses</span></div>
     <div class="sb-item" data-tab="settings">⚙️ அமைப்புகள் <span class="lang-tag">Settings</span></div>
   </div>
 
   <!-- ---------- DASHBOARD ---------- -->
   <div class="screen" id="dashboard">
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+      <h2 style="margin:0;color:var(--primary-dark);font-size:1.1rem;">Dashboard</h2>
+      <div class="rangebar" data-key="dash" data-default="today" data-chips="today,yesterday,week,thismonth,lastmonth,custom,all" style="margin:0;"></div>
+    </div>
+
     <div class="stat-grid">
-      <div class="stat"><b id="statToday">₹0</b><span>இன்று விற்பனை<br>Today's Sales</span></div>
-      <div class="stat"><b id="statBills">0</b><span>மொத்த பில்கள்<br>Total Bills</span></div>
+      <div class="stat"><b id="dashStatSales">₹0</b><span>விற்பனை<br>Sales</span></div>
+      <div class="stat"><b id="dashStatBills">0</b><span>பில்கள்<br>Bills</span></div>
     </div>
     <div class="stat-grid">
-      <div class="stat"><b id="statTotalSales">₹0</b><span>மொத்த விற்பனை<br>All-time Sales</span></div>
-      <div class="stat"><b id="statLowStock">0</b><span>குறைந்த ஸ்டாக்<br>Low Stock Items</span></div>
+      <div class="stat"><b id="dashStatProducts">0</b><span>பொருட்கள்<br>Products</span></div>
+      <div class="stat"><b id="dashStatAvg">₹0</b><span>சராசரி பில்<br>Avg Bill</span></div>
     </div>
     <div class="stat-grid">
-      <div class="stat"><b id="statStockUnits">0</b><span>மொத்த ஸ்டாக் யூனிட்<br>Total Stock Units</span></div>
-      <div class="stat"><b id="statStockValue">₹0</b><span>மொத்த ஸ்டாக் மதிப்பு<br>Total Stock Value</span></div>
+      <div class="stat"><b id="dashStatNetCash">₹0</b><span>நிகர பணப்புழக்கம் (இந்த காலம்)<br>Net Cash Flow (this period)</span></div>
+      <div class="stat"><b id="dashStatPending">₹0</b><span>வர வேண்டியது (மொத்தம்)<br>Pending to Receive (all-time)</span></div>
     </div>
-    <div class="stat-grid">
-      <div class="stat"><b id="statInvestment">₹0</b><span>ஸ்டாக் முதலீடு<br>Stock Investment</span></div>
-      <div class="stat"><b id="statProfit">₹0</b><span>மொத்த லாபம்<br>Total Profit</span></div>
+
+    <div class="dash-row">
+      <div class="card">
+        <div class="dash-card-header">📈 Monthly Sales</div>
+        <div style="position:relative;width:100%;height:220px;"><canvas id="chartDashSales" style="width:100% !important;height:100% !important;"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="dash-card-header">🍩 Payment Methods</div>
+        <div style="position:relative;width:100%;height:220px;"><canvas id="chartDashPay" style="width:100% !important;height:100% !important;"></canvas></div>
+      </div>
     </div>
+
+    <div class="card">
+      <h3>Recent Bills <span class="lang-tag">/ சமீபத்திய பில்கள்</span></h3>
+      <div style="overflow-x:auto;">
+        <table class="bill-table" style="width:100%;min-width:420px;">
+          <thead><tr><th>Bill</th><th>Customer</th><th>Amount</th><th>Payment</th><th>Date</th></tr></thead>
+          <tbody id="recentBillsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Quick Actions <span class="lang-tag">/ விரைவு செயல்கள்</span></h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-primary" style="flex:1 1 130px;" onclick="switchToScreen('billing')">➕ New Bill</button>
+        <button class="btn-outline" style="flex:1 1 130px;" onclick="switchToScreen('products')">📦 Add Product</button>
+        <button class="btn-outline" style="flex:1 1 130px;" onclick="switchToScreen('customers')">👥 Customers</button>
+        <button class="btn-outline" style="flex:1 1 130px;" onclick="switchToScreen('reports')">📈 Reports</button>
+      </div>
+    </div>
+
+    <button class="btn-outline" id="statsToggleBtn" style="width:100%;margin-bottom:12px;" onclick="toggleStatsVisibility()">👁️ விரிவான Stats காமிக்க / மறைக்க · Detailed Stats</button>
+    <div id="statsContainer">
+      <div class="stat-grid">
+        <div class="stat"><b id="statTotalSales">₹0</b><span>மொத்த விற்பனை<br>All-time Sales</span></div>
+        <div class="stat"><b id="statLowStock">0</b><span>குறைந்த ஸ்டாக்<br>Low Stock Items</span></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><b id="statStockUnits">0</b><span>மொத்த ஸ்டாக் யூனிட்<br>Total Stock Units</span></div>
+        <div class="stat"><b id="statStockValue">₹0</b><span>மொத்த ஸ்டாக் மதிப்பு<br>Total Stock Value</span></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><b id="statInvestment">₹0</b><span>ஸ்டாக் முதலீடு<br>Stock Investment</span></div>
+        <div class="stat"><b id="statProfit">₹0</b><span>மொத்த லாபம்<br>Total Profit</span></div>
+      </div>
+    </div>
+    <div id="statsHiddenNote" class="empty" style="display:none;">👁️‍🗨️ Stats மறைக்கப்பட்டுள்ளது — காமிக்க மேலே உள்ள button-ஐ press பண்ணுங்க<br>Stats hidden — tap the button above to show</div>
     <div class="card">
       <h3>இன்று பணம் முறை வாரியாக விற்பனை <span class="lang-tag">/ Today's Payment Method-wise Sales</span></h3>
       <div id="payBreakdown"></div>
@@ -238,42 +679,56 @@
 
   <!-- ---------- BILLING ---------- -->
   <div class="screen" id="billing">
-    <div class="card">
-      <h3>வாடிக்கையாளர் <span class="lang-tag">/ Customer</span></h3>
-      <div class="row">
-        <div><label>பெயர் / Name</label><input id="custName" placeholder="Customer name"></div>
-        <div><label>போன் / Phone</label><input id="custPhone" placeholder="Phone number" oninput="lookupCustomerByPhone(this.value)"></div>
+    <div class="pos-topbar">
+      <div class="pos-topbar-field pos-topbar-cust">
+        <span class="pos-icon">👤</span>
+        <div class="pos-topbar-inputs">
+          <label for="custName">பெயர் / Customer Name</label>
+          <input id="custName" placeholder="Walk-in Customer / Name">
+          <label for="custPhone">போன் / Phone</label>
+          <input id="custPhone" class="pos-sub-input" placeholder="Phone number" oninput="lookupCustomerByPhone(this.value)">
+        </div>
       </div>
-      <div id="custPhoneMatch"></div>
+      <div class="pos-topbar-field pos-topbar-search">
+        <span class="pos-icon">🔍</span>
+        <input id="itemSearch" placeholder="Enter Product name / பேர் தேடு அல்லது Barcode scan">
+      </div>
     </div>
-    <div class="card">
-      <h3>பொருள் சேர் <span class="lang-tag">/ Add Item (name or barcode, Enter to add exact barcode)</span></h3>
-      <input id="itemSearch" placeholder="🔍 பேர் தேடு அல்லது Barcode / Search name or scan barcode">
-      <div id="searchResults"></div>
-    </div>
-    <div class="card">
+    <div id="custPhoneMatch"></div>
+    <div id="searchResults"></div>
+    <div class="card" id="billItemsCard">
       <h3>பில் விவரங்கள் <span class="lang-tag">/ Bill Items</span></h3>
+      <div class="pos-table-head">
+        <span>பொருள் / Product</span><span>அளவு / Qty · கூட்டு / Subtotal</span>
+      </div>
       <div id="billItems"><div class="empty">பொருள் இன்னும் சேர்க்கவில்லை<br>No items added yet</div></div>
-      <div class="total-bar"><span>கூட்டு / Subtotal</span><span id="billSubtotal">₹0</span></div>
-      <div class="split-row" style="margin-top:8px;">
+    </div>
+    <div class="pos-summary-footer">
+      <div class="pos-summary-stat"><span>பொருட்கள் / Items</span><b id="billItemsCount">0</b></div>
+      <div class="pos-summary-stat"><span>கூட்டு / Subtotal</span><b id="billSubtotal">₹0</b></div>
+      <div class="pos-summary-stat pos-summary-discount">
         <span>Discount %</span>
         <input type="number" min="0" max="100" id="discountPercent" placeholder="0" oninput="renderBillItems()">
       </div>
-      <div id="discountLine" class="split-note" style="display:none;"></div>
-      <div class="total-bar"><span>மொத்தம் / Final Total</span><span id="billTotal">₹0</span></div>
+      <div class="pos-summary-stat pos-summary-total"><span>மொத்தம் / Total Payable</span><b id="billTotal">₹0</b></div>
     </div>
+    <div id="discountLine" class="split-note" style="display:none;"></div>
     <div class="card">
       <h3>பணம் செலுத்தும் முறை <span class="lang-tag">/ Payment Method (optional · multi-select)</span></h3>
-      <div class="pay-options" id="payOptions">
-        <div class="pay-btn" data-pay="Cash" onclick="selectPay('Cash')">💵 Cash<br><span class="lang-tag">பணம்</span></div>
-        <div class="pay-btn" data-pay="UPI" onclick="selectPay('UPI')">📱 UPI<br><span class="lang-tag">யுபிஐ</span></div>
-        <div class="pay-btn" data-pay="Card" onclick="selectPay('Card')">💳 Card<br><span class="lang-tag">கார்டு</span></div>
+      <div class="pay-row">
+        <div class="pay-options" id="payOptions">
+          <div class="pay-btn" data-pay="Cash" onclick="selectPay('Cash')">💵 Cash<br><span class="lang-tag">பணம்</span></div>
+          <div class="pay-btn" data-pay="UPI" onclick="selectPay('UPI')">📱 UPI<br><span class="lang-tag">யுபிஐ</span></div>
+          <div class="pay-btn" data-pay="Card" onclick="selectPay('Card')">💳 Card<br><span class="lang-tag">கார்டு</span></div>
+        </div>
+        <div id="cashChangeBox"></div>
       </div>
       <div id="paySplit"></div>
-      <div id="cashChangeBox"></div>
     </div>
-    <button class="btn-primary" id="saveBillBtn" onclick="saveBill()">✅ பில் முடி / Complete Bill</button>
-    <button class="btn-outline" id="cancelEditBtn" style="display:none;width:100%;margin-top:8px;" onclick="cancelEdit()">✕ Edit ரத்து / Cancel Edit</button>
+    <div class="pos-actions-bar">
+      <button class="btn-outline" id="cancelEditBtn" onclick="cancelCurrentBill()">🗑️ பில் ரத்து / Cancel Bill</button>
+      <button class="btn-primary" id="saveBillBtn" onclick="saveBill()">✅ பில் முடி / Complete Bill</button>
+    </div>
   </div>
 
   <!-- ---------- PRODUCTS / STOCK ---------- -->
@@ -290,8 +745,13 @@
       </div>
       <div class="row">
         <div><label>குறைந்த அளவு எச்சரிக்கை / Low stock alert</label><input id="newItemLow" type="number" placeholder="5" value="5"></div>
-        <div><label>Barcode <span class="lang-tag">(optional)</span></label><input id="newItemBarcode" placeholder="Scan or type barcode"></div>
+        <div><label>Barcode <span class="lang-tag">(optional)</span></label>
+          <div style="display:flex;gap:6px;"><input id="newItemBarcode" placeholder="Scan or type barcode" style="margin-bottom:0;"><button type="button" class="btn-outline btn-small" style="flex-shrink:0;" onclick="document.getElementById('newItemBarcode').value=generateUniqueBarcode()">🎲 Auto</button></div>
+        </div>
       </div>
+      <label>வகை / Category <span class="lang-tag">(optional · e.g. Bags, Cosmetics)</span></label>
+      <input id="newItemCategory" list="categoryList" placeholder="Category">
+      <datalist id="categoryList"></datalist>
       <label>பொருள் படம் / Product Image <span class="lang-tag">(optional, small photo)</span></label>
       <input type="file" id="newItemImage" accept="image/*">
       <button class="btn-primary" onclick="addProduct()">➕ சேர் / Add Product</button>
@@ -299,7 +759,30 @@
     <div class="card">
       <h3>பொருட்கள் பட்டியல் <span class="lang-tag">/ Product List</span></h3>
       <input id="productSearch" placeholder="🔍 தேடு / Search..." oninput="renderProducts()">
+      <div class="row" style="align-items:center;">
+        <select id="productCategoryFilter" onchange="renderProducts()" style="margin-bottom:0;"><option value="">📂 எல்லா வகையும் / All Categories</option></select>
+        <button type="button" id="lowOnlyBtn" class="btn-outline btn-small" onclick="toggleLowOnly()" style="white-space:nowrap;">⚠️ Low Stock மட்டும்</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:10px 0;">
+        <label style="margin:0;white-space:nowrap;">Stock மாற்ற காரணம் / Reason:</label>
+        <select id="stockReason" style="margin-bottom:0;">
+          <option value="Correction">Correction / திருத்தம்</option>
+          <option value="Purchase">Purchase / புது stock வாங்கினேன்</option>
+          <option value="Damage">Damage / சேதம்</option>
+          <option value="Return">Return / திருப்பம்</option>
+        </select>
+      </div>
       <div id="productList"></div>
+    </div>
+    <div class="card">
+      <h3>📥 Bulk Stock Import <span class="lang-tag">/ Excel-ல இருந்து ஏற்று</span></h3>
+      <div class="split-note" style="margin-bottom:8px;">Excel/CSV columns: <b>Product, Price, Cost, Stock, Low Stock Alert, Barcode, Category</b> (Backup tab-ல Excel Download பண்ணா அதே format கிடைக்கும்). பெயர் அல்லது Barcode ஒத்துப்போனா update ஆகும், இல்லன்னா புதுசா add ஆகும் / Matching name or barcode is updated, others are added.</div>
+      <button class="btn-outline" style="width:100%;" onclick="document.getElementById('stockImportFile').click()">⬆️ Excel/CSV Import</button>
+      <input type="file" id="stockImportFile" accept=".xlsx,.xls,.csv" style="display:none;" onchange="importProductsFromFile(event)">
+    </div>
+    <div class="card">
+      <h3 class="collapsible-h" onclick="toggleSec('secStockLog')">📜 Stock மாற்ற வரலாறு <span class="lang-tag">/ Stock Adjustment Log</span> <span id="secStockLogArrow">▶</span></h3>
+      <div id="secStockLog" style="display:none;"><div id="stockLogList"></div></div>
     </div>
   </div>
 
@@ -307,6 +790,7 @@
   <div class="screen" id="history">
     <div class="card">
       <h3>பில் வரலாறு <span class="lang-tag">/ Bill History</span></h3>
+      <div class="rangebar" data-key="hist" data-default="all" data-chips="all,today,yesterday,d7,thismonth,lastmonth,custom" data-note="1"></div>
       <input id="historySearch" placeholder="🔍 வாடிக்கையாளர் பெயர்/போன் தேடு · Search customer name or phone" oninput="renderHistory()">
       <div id="historyList"><div class="empty">இன்னும் பில் இல்லை<br>No bills yet</div></div>
     </div>
@@ -324,13 +808,88 @@
   <!-- ---------- REPORTS ---------- -->
   <div class="screen" id="reports">
     <button class="btn-accent" style="width:100%;margin-bottom:12px;" onclick="downloadReportsExcel()">📥 எல்லா Reports Download (Excel) / Download All Reports</button>
+
+    <div class="card" style="text-align:center;">
+      <h2 style="margin:0 0 4px;color:var(--primary-dark);font-size:1.1rem;">📊 Sales Dashboard</h2>
+      <div class="lang-tag">உங்க bills, products data-ஐ வெச்சு தானாகவே கணக்கிடப்பட்டது / Calculated live from your own billing data</div>
+    </div>
+
+    <div class="card">
+      <input type="hidden" id="repView" value="month">
+      <div class="rep-chips" id="repChips">
+        <button class="rep-chip active" data-v="month" onclick="setRepView('month')">📅 Monthly</button>
+        <span class="rep-chip-sep"></span>
+        <button class="rep-chip" data-v="d7" onclick="setRepView('d7')">7 Days</button>
+        <button class="rep-chip" data-v="d30" onclick="setRepView('d30')">30 Days</button>
+        <button class="rep-chip" data-v="thismonth" onclick="setRepView('thismonth')">This Month</button>
+        <button class="rep-chip" data-v="lastmonth" onclick="setRepView('lastmonth')">Last Month</button>
+        <button class="rep-chip" data-v="custom" onclick="setRepView('custom')">🗓️ Custom</button>
+      </div>
+      <div class="rep-custom" id="repCustomRange">
+        <div><label>From</label><input id="repFrom" type="date" onchange="renderDashboardCharts()"></div>
+        <div><label>To</label><input id="repTo" type="date" onchange="renderDashboardCharts()"></div>
+      </div>
+      <div class="rep-range-note" id="repRangeNote"></div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><b id="repStatSales">₹0</b><span>விற்பனை<br>Sales</span></div>
+      <div class="stat"><b id="repStatProfit">₹0</b><span>லாபம்<br>Profit</span></div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat"><b id="repStatBills">0</b><span>பில்கள்<br>Bills</span></div>
+      <div class="stat"><b id="repStatAvg">₹0</b><span>சராசரி பில்<br>Avg Bill</span></div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat"><b id="repStatNetCash">₹0</b><span>நிகர பணப்புழக்கம்<br>Net Cash Flow</span></div>
+      <div class="stat"><b id="repStatExpGiven">₹0</b><span>செலவு + கொடுத்தது<br>Expenses + Given</span></div>
+    </div>
+
+
+    <div class="card">
+      <div class="dash-card-header">💰 பணம் முறை வாரியாக விற்பனை / Sales by Payment Method</div>
+      <div style="position:relative;width:100%;height:230px;"><canvas id="chartPayDonut" style="width:100% !important;height:100% !important;"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="dash-card-header" id="repTitleSales">📈 மாத விற்பனை போக்கு / Monthly Sales Trend</div>
+      <div style="position:relative;width:100%;height:220px;"><canvas id="chartSalesTrend" style="width:100% !important;height:100% !important;"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="dash-card-header" id="repTitleProfit">💹 மாத லாப போக்கு / Monthly Profit Trend</div>
+      <div style="position:relative;width:100%;height:220px;"><canvas id="chartProfitTrend" style="width:100% !important;height:100% !important;"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="dash-card-header">🏆 அதிகம் விற்ற பொருட்கள் பங்கு / Top Products Share</div>
+      <div style="position:relative;width:100%;height:230px;"><canvas id="chartTopDonut" style="width:100% !important;height:100% !important;"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="dash-card-header" id="repTitleBills">🧾 மாத பில் எண்ணிக்கை / Monthly Bills Count</div>
+      <div style="position:relative;width:100%;height:220px;"><canvas id="chartBillsTrend" style="width:100% !important;height:100% !important;"></canvas></div>
+    </div>
+
+    <div class="split-note" style="margin:6px 2px 12px;">📋 விரிவான அறிக்கைகள் (tap செய்ய) / Detailed reports (tap to expand)</div>
+
     <div class="card">
       <h3 class="collapsible-h" onclick="toggleSec('secDaily')">📅 நாள் வாரியாக விற்பனை / Daily & Date-wise Sales <span id="secDailyArrow">▶</span></h3>
       <div id="secDaily" style="display:none;"></div>
     </div>
     <div class="card">
-      <h3>பணம் முறை வாரியாக விற்பனை (All-time) / Payment Method-wise Sales</h3>
+      <h3 class="collapsible-h"><span>பணம் முறை வாரியாக விற்பனை − செலவு (Net) <span class="lang-tag">/ Payment Method-wise Sales minus Expenses (This Week)</span></span>
+        <button class="btn-outline btn-small" style="flex-shrink:0;" onclick="refreshPaymentNetCard()">🔄 Refresh</button>
+      </h3>
       <div id="reportPayBreakdown"></div>
+      <button class="btn-outline btn-small" style="width:100%;margin-top:10px;" onclick="saveCurrentWeekNow()">🔒 இந்த வாரத்தை இப்போதே Save பண்ணு <span class="lang-tag">/ Save this week now</span></button>
+    </div>
+    <div class="card">
+      <h3 class="collapsible-h" onclick="toggleSec('secWeekNet')">📚 வார வாரியான Net வரலாறு <span class="lang-tag">/ Weekly Net History (edit செய்யலாம்)</span> <span id="secWeekNetArrow">▶</span></h3>
+      <div id="secWeekNet" style="display:none;">
+        <div class="split-note">ஒவ்வொரு வாரமும் முடிந்தவுடன் அந்த வார தரவு தானாக இங்கே Save ஆகும் / Each week's total is auto-saved here once the week ends. Tap ✏️ to correct any week's numbers.</div>
+        <div id="weekNetHistoryList"></div>
+      </div>
     </div>
     <div class="card">
       <h3 class="collapsible-h" onclick="toggleSec('secTop')">🏆 அதிகம் விற்பனையான பொருட்கள் / Top Selling Products <span id="secTopArrow">▶</span></h3>
@@ -355,6 +914,13 @@
       </div>
     </div>
     <div class="card">
+      <h3 class="collapsible-h" onclick="toggleSec('secSlow')">🐌 குறைவா விற்கும் பொருட்கள் / Slow-Moving Stock <span id="secSlowArrow">▶</span></h3>
+      <div id="secSlow" style="display:none;">
+        <div class="split-note" style="margin-bottom:6px;">குறைந்த அளவு (அல்லது ஒன்றும்) விற்ற பொருட்கள் — stock அதிகமா pending இருக்கா பாருங்க / Products that have sold the least (or not at all) — check if stock is piling up.</div>
+        <div id="secSlowList"></div>
+      </div>
+    </div>
+    <div class="card">
       <h3 class="collapsible-h" onclick="toggleSec('secCustRep')">👥 வாடிக்கையாளர் வாங்குதல் அறிக்கை / Customer Purchase Report <span id="secCustRepArrow">▶</span></h3>
       <div id="secCustRep" style="display:none;">
         <div style="position:relative;height:220px;margin-bottom:10px;"><canvas id="chartCustRep"></canvas></div>
@@ -363,8 +929,125 @@
     </div>
   </div>
 
-  <!-- ---------- BACKUP & DATA ---------- -->
-  <div class="screen" id="backup">
+  <!-- ---------- EXPENSES ---------- -->
+  <div class="screen" id="expenses">
+    <div class="rep-chips" style="margin-bottom:10px;">
+      <button class="rep-chip active" id="ieTabIncome" onclick="setIncExpTab('income')">📥 வரவுப் பட்டியல் / Given &amp; Received</button>
+      <button class="rep-chip" id="ieTabExpense" onclick="setIncExpTab('expense')">💸 செலவுகள் / Expenses</button>
+    </div>
+
+    <div id="subIncome">
+    <div class="stat-grid">
+      <div class="stat"><b id="lgStatPending">₹0</b><span>வர வேண்டியது<br>To Receive Back</span></div>
+      <div class="stat"><b id="lgStatPeople">0</b><span>நபர்கள் (பாக்கி)<br>People Pending</span></div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat"><b id="lgStatGiven">₹0</b><span>மொத்தம் கொடுத்தது<br>Total Given</span></div>
+      <div class="stat"><b id="lgStatRecv">₹0</b><span>திரும்ப வந்தது<br>Received Back</span></div>
+    </div>
+
+    <div class="card" id="lgFormCard">
+      <h3>➕ புதிய பதிவு <span class="lang-tag">/ New Entry</span></h3>
+      <div class="rep-chips" style="margin-bottom:10px;">
+        <button class="rep-chip active" id="lgTypeGiven" onclick="setLgType('given')">📤 கொடுத்தது / Money Given</button>
+        <button class="rep-chip" id="lgTypeRecv" onclick="setLgType('received')">📥 திரும்ப வாங்கினது / Received Back</button>
+      </div>
+      <input type="hidden" id="lgType" value="given">
+      <div class="row">
+        <div><label>பெயர் / Name</label><input id="lgName" list="lgNames" placeholder="e.g. Ravi"></div>
+        <div><label>போன் / Phone (optional)</label><input id="lgPhone" type="tel" placeholder="98xxxxxxxx"></div>
+      </div>
+      <datalist id="lgNames"></datalist>
+      <div class="row">
+        <div><label>தொகை (₹) / Amount</label><input id="lgAmount" type="number" placeholder="0"></div>
+        <div><label>தேதி / Date</label><input id="lgDate" type="date"></div>
+      </div>
+      <label>குறிப்பு <span class="lang-tag">/ Note (optional)</span></label>
+      <input id="lgNote" placeholder="e.g. urgent need, will return Friday">
+      <button class="btn-primary" onclick="addLending()">💾 சேமி / Save</button>
+    </div>
+
+    <div class="card">
+      <h3>⏳ வர வேண்டிய பாக்கி <span class="lang-tag">/ Pending to Receive</span></h3>
+      <div id="lgPending"></div>
+    </div>
+
+    <div class="card">
+      <h3>📜 எல்லா பதிவுகள் <span class="lang-tag">/ All Entries</span></h3>
+      <div class="rangebar" data-key="inc" data-default="all" data-chips="all,today,yesterday,d7,thismonth,lastmonth,custom" data-note="1"></div>
+      <div id="incomeList"></div>
+    </div>
+    </div>
+
+    <div id="subExpense" style="display:none;">
+    <div class="card">
+      <h3>💸 புதிய செலவு <span class="lang-tag">/ New Expense</span></h3>
+      <div class="row">
+        <div><label>தேதி / Date</label><input id="expDate" type="date"></div>
+        <div><label>வகை / Category</label>
+          <select id="expCategory" onchange="onExpCategoryChange()"></select>
+        </div>
+      </div>
+      <input id="expCategoryCustom" placeholder="Category name" style="display:none;">
+      <label>விவரம் <span class="lang-tag">/ Description (optional)</span></label>
+      <input id="expDescription" placeholder="e.g. September shop rent">
+      <div class="row">
+        <div><label>தொகை (₹) / Amount</label><input id="expAmount" type="number" placeholder="0"></div>
+        <div><label>பணம் முறை / Payment Method</label>
+          <select id="expPayment">
+            <option value="Cash">💵 Cash</option>
+            <option value="UPI">📱 UPI</option>
+            <option value="Card">💳 Card</option>
+          </select>
+        </div>
+      </div>
+      <label>ரசீது படம் <span class="lang-tag">/ Receipt photo (optional)</span></label>
+      <input type="file" id="expReceipt" accept="image/*">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:2px;">
+        <input type="checkbox" id="expRecurring" style="width:auto;margin:0;">
+        <span>🔁 மாதம்தோறும் repeat ஆகும் செலவு <span class="lang-tag">/ Recurring monthly expense</span></span>
+      </label>
+      <button class="btn-primary" onclick="addExpense()">➕ சேர் / Add Expense</button>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><b id="expStatTotal">₹0</b><span>மொத்த செலவு<br>Total Expenses</span></div>
+      <div class="stat"><b id="expStatNetProfit">₹0</b><span>நிகர லாபம் (செலவுக்கு பின்)<br>Net Profit (after expenses)</span></div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat"><b id="expStatNetCash">₹0</b><span>நிகர பணப்புழக்கம் (மொத்தம்)<br>Net Cash Flow (all-time)</span></div>
+      <div class="stat"><b id="expStatLending">₹0</b><span>கொடுத்தது − வந்தது<br>Given − Received</span></div>
+    </div>
+
+    <div class="card">
+      <h3 class="collapsible-h" onclick="toggleSec('secExpChart')">📊 இந்த மாதம் வகை வாரியா செலவு / This Month by Category <span id="secExpChartArrow">▶</span></h3>
+      <div id="secExpChart" style="display:none;">
+        <div style="position:relative;width:100%;height:220px;margin-bottom:10px;"><canvas id="chartExpCategory"></canvas></div>
+        <div id="expBudgetList"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 class="collapsible-h" onclick="toggleSec('secExpBudget')">🎯 மாத Budget (வகை வாரியா) / Monthly Budget per Category <span id="secExpBudgetArrow">▶</span></h3>
+      <div id="secExpBudget" style="display:none;">
+        <div class="split-note" style="margin-bottom:6px;">ஒவ்வொரு category-க்கும் மாத budget வச்சு, அதை தாண்டினா இங்க warning காமிக்கும் / Set a monthly budget per category — it'll be flagged here if exceeded.</div>
+        <div id="expBudgetInputs"></div>
+        <button class="btn-outline btn-small" style="width:100%;margin-top:8px;" onclick="saveExpenseBudgets()">💾 Budget Save பண்ணு / Save Budgets</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>செலவுகள் பட்டியல் <span class="lang-tag">/ Expense List</span></h3>
+      <div class="rangebar" data-key="exp" data-default="all" data-chips="all,today,yesterday,d7,thismonth,lastmonth,custom" data-note="1"></div>
+      <input id="expenseSearch" placeholder="🔍 வகை/விவரம் தேடு · Search category or description" oninput="renderExpenses()">
+      <div id="expenseList"></div>
+    </div>
+  </div>
+    </div>
+  </div>
+
+  <!-- ---------- SETTINGS ---------- -->
+  <div class="screen" id="settings">
+    <div class="card" style="padding-bottom:2px;"><h3 style="margin-bottom:0;">💾 Backup & Data</h3></div>
     <div class="card">
       <h3>💾 Backup / Restore <span class="lang-tag">(வேற device/browser-க்கு கொண்டு போக)</span></h3>
       <p style="font-size:.78rem;color:var(--muted);margin-top:0;">
@@ -374,7 +1057,7 @@
         <button class="btn-outline" onclick="downloadBackup()">⬇️ Backup Download</button>
         <button class="btn-outline" onclick="document.getElementById('restoreFile').click()">⬆️ Restore Backup</button>
       </div>
-      <button class="btn-accent" style="width:100%;margin-top:8px;" onclick="exportToExcel()">📊 Excel-ஆ Download (.xlsx)</button>
+      <button class="btn-accent" style="width:100%;margin-top:8px;" onclick="exportToExcel()">📊 எல்லாம் ஒரே Excel-ஆ Download / Download Everything (.xlsx)</button>
       <input type="file" id="restoreFile" accept=".json" style="display:none;" onchange="restoreBackup(event)">
     </div>
     <div class="card">
@@ -383,10 +1066,33 @@
       <button class="btn-danger-outline" style="width:100%;margin-bottom:8px;" onclick="clearAllBills()">🗑️ All Bills நீக்கு / Clear All Bills</button>
       <button class="btn-danger-outline" style="width:100%;" onclick="clearAllData()">🗑️ Everything நீக்கு / Clear All Data</button>
     </div>
-  </div>
 
-  <!-- ---------- SETTINGS ---------- -->
-  <div class="screen" id="settings">
+    <div class="card">
+      <h3>☁️ Cloud Sync</h3>
+      <div id="cloudStatus" style="font-size:.8rem;text-align:center;padding:10px;border-radius:8px;"></div>
+    </div>
+    <div class="card">
+      <h3>🎨 Colour Theme <span class="lang-tag">/ நிறம் தேர்வு</span></h3>
+      <div class="theme-swatches" id="themeSwatches"></div>
+      <div class="lang-tag" style="margin-top:8px;">தேர்ந்த நிறம் Admin Panel & Billing page ரெண்டுலயும் மாறும் (இந்த browser-ல save ஆகும்) · Applies to both pages on this browser.</div>
+    </div>
+    <div class="card">
+      <h3>⚡ Speed & Convenience</h3>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" id="autoWhatsAppToggle" style="width:auto;margin:0;" onchange="localStorage.setItem('autoWhatsApp', this.checked ? 'on':'off')">
+        <span>பில் complete ஆனவுடன் தானாகவே WhatsApp receipt திற (customer phone இருந்தா) <span class="lang-tag">/ Auto-open WhatsApp receipt after completing a bill (when customer phone is filled)</span></span>
+      </label>
+      <div class="lang-tag" style="margin-top:6px;">Keyboard shortcuts (Billing screen): <b>F2</b> = New Bill/focus search · <b>F9</b> = Complete Bill · <b>Esc</b> = Cancel Bill</div>
+    </div>
+    <div class="card">
+      <h3>🌐 மொழி / Language</h3>
+      <label>Interface language / மொழி தேர்வு</label>
+      <select id="langPrefSelect" onchange="setLanguagePreference(this.value)">
+        <option value="both">தமிழ் + English (Default)</option>
+        <option value="ta">தமிழ் மட்டும் (Compact — English translations hidden)</option>
+      </select>
+      <div class="lang-tag">இந்த setting இந்த browser/device-ல மட்டும் save ஆகும் · This setting is saved on this device only.</div>
+    </div>
     <div class="card">
       <h3>🏪 கடை விவரங்கள் <span class="lang-tag">/ Shop Details (shown on printed / WhatsApp bills)</span></h3>
       <label>கடை பெயர் / Shop Name</label>
@@ -472,15 +1178,29 @@ const LS_BILLS = 'kb_bills';
 const LS_ADMIN = 'kb_admin_auth';
 const LS_SESSION = 'kb_admin_session';
 const LS_SHOP = 'kb_shop_settings';
+const LS_EXPENSES = 'kb_expenses';
+const LS_LENDINGS = 'kb_lendings';
+const LS_WEEKNET = 'kb_weeknet_history';
 const DEFAULT_SHOP_SETTINGS = { name:'ZHA BILL', address:'', gst:'', phone:'' };
 
 function loadProductsLocal(){ try{ return JSON.parse(localStorage.getItem(LS_PRODUCTS)) || []; }catch(e){ return []; } }
 function loadBillsLocal(){ try{ return JSON.parse(localStorage.getItem(LS_BILLS)) || []; }catch(e){ return []; } }
 function loadShopSettingsLocal(){ try{ return Object.assign({}, DEFAULT_SHOP_SETTINGS, JSON.parse(localStorage.getItem(LS_SHOP)) || {}); }catch(e){ return Object.assign({}, DEFAULT_SHOP_SETTINGS); } }
+function loadExpensesLocal(){ try{ return JSON.parse(localStorage.getItem(LS_EXPENSES)) || []; }catch(e){ return []; } }
+function loadLendingsLocal(){ try{ return JSON.parse(localStorage.getItem(LS_LENDINGS)) || []; }catch(e){ return []; } }
+function loadWeekNetLocal(){ try{ return JSON.parse(localStorage.getItem(LS_WEEKNET)) || []; }catch(e){ return []; } }
 
 let products = loadProductsLocal();
 let bills = loadBillsLocal();
 let shopSettings = loadShopSettingsLocal();
+let expenses = loadExpensesLocal();
+let lendings = loadLendingsLocal();
+// Weekly snapshots of "Payment Method-wise Sales minus Expenses". The live
+// card on the Reports screen always shows the CURRENT week (auto-resets to
+// zero every Monday because it's filtered by date). Once a week is fully
+// over, its totals are saved here automatically so nothing is lost — and
+// each saved week can be edited later (see openEditWeekNet / saveEditWeekNet).
+let weekNetHistory = loadWeekNetLocal();
 
 // ---------- Firebase (cloud database) ----------
 // Reads the `firebaseConfig` object from firebase-config.js. If that file
@@ -543,6 +1263,24 @@ function startCloudSync(){
     }
   }).catch(function(e){ console.error('migration check (shop_settings) failed', e); });
 
+  db.collection('zha_bill_store').doc('expenses').get().then(function(doc){
+    if(!doc.exists && expenses.length > 0){
+      db.collection('zha_bill_store').doc('expenses').set({ list: expenses, updatedAt: new Date().toISOString() });
+    }
+  }).catch(function(e){ console.error('migration check (expenses) failed', e); });
+
+  db.collection('zha_bill_store').doc('lendings').get().then(function(doc){
+    if(!doc.exists && lendings.length > 0){
+      db.collection('zha_bill_store').doc('lendings').set({ list: lendings, updatedAt: new Date().toISOString() });
+    }
+  }).catch(function(e){ console.error('migration check (lendings) failed', e); });
+
+  db.collection('zha_bill_store').doc('weeknet_history').get().then(function(doc){
+    if(!doc.exists && weekNetHistory.length > 0){
+      db.collection('zha_bill_store').doc('weeknet_history').set({ list: weekNetHistory, updatedAt: new Date().toISOString() });
+    }
+  }).catch(function(e){ console.error('migration check (weeknet_history) failed', e); });
+
   db.collection('zha_bill_store').doc('products').onSnapshot(function(doc){
     products = doc.exists ? (doc.data().list || []) : [];
     localStorage.setItem(LS_PRODUCTS, JSON.stringify(products));
@@ -569,6 +1307,24 @@ function startCloudSync(){
       fillShopSettingsForm();
     }
   }, function(err){ console.error('shop settings sync error', err); });
+
+  db.collection('zha_bill_store').doc('expenses').onSnapshot(function(doc){
+    expenses = doc.exists ? (doc.data().list || []) : [];
+    localStorage.setItem(LS_EXPENSES, JSON.stringify(expenses));
+    refreshVisibleScreen();
+  }, function(err){ console.error('expenses sync error', err); });
+
+  db.collection('zha_bill_store').doc('lendings').onSnapshot(function(doc){
+    lendings = doc.exists ? (doc.data().list || []) : [];
+    localStorage.setItem(LS_LENDINGS, JSON.stringify(lendings));
+    refreshVisibleScreen();
+  }, function(err){ console.error('lendings sync error', err); });
+
+  db.collection('zha_bill_store').doc('weeknet_history').onSnapshot(function(doc){
+    weekNetHistory = doc.exists ? (doc.data().list || []) : [];
+    localStorage.setItem(LS_WEEKNET, JSON.stringify(weekNetHistory));
+    refreshVisibleScreen();
+  }, function(err){ console.error('weeknet_history sync error', err); });
 }
 
 function refreshVisibleScreen(){
@@ -581,6 +1337,7 @@ function refreshVisibleScreen(){
   if(id === 'customers') renderCustomers();
   if(id === 'reports') renderReports();
   if(id === 'billing') renderBillItems();
+  if(id === 'expenses'){ renderExpenses(); renderIncome(); }
 }
 
 function saveProducts(p){
@@ -592,6 +1349,21 @@ function saveBills(b){
   bills = b;
   localStorage.setItem(LS_BILLS, JSON.stringify(b));
   if(db){ db.collection('zha_bill_store').doc('bills').set({ list: b, updatedAt: new Date().toISOString() }).catch(function(e){ console.error('cloud save (bills) failed', e); toast('⚠️ Cloud save தோல்வி — internet check பண்ணுங்க'); }); }
+}
+function saveExpenses(e){
+  expenses = e;
+  localStorage.setItem(LS_EXPENSES, JSON.stringify(e));
+  if(db){ db.collection('zha_bill_store').doc('expenses').set({ list: e, updatedAt: new Date().toISOString() }).catch(function(err){ console.error('cloud save (expenses) failed', err); toast('⚠️ Cloud save தோல்வி — internet check பண்ணுங்க'); }); }
+}
+function saveLendings(l){
+  lendings = l;
+  localStorage.setItem(LS_LENDINGS, JSON.stringify(l));
+  if(db){ db.collection('zha_bill_store').doc('lendings').set({ list: l, updatedAt: new Date().toISOString() }).catch(function(err){ console.error('cloud save (lendings) failed', err); toast('⚠️ Cloud save failed'); }); }
+}
+function saveWeekNetHistory(w){
+  weekNetHistory = w;
+  localStorage.setItem(LS_WEEKNET, JSON.stringify(w));
+  if(db){ db.collection('zha_bill_store').doc('weeknet_history').set({ list: w, updatedAt: new Date().toISOString() }).catch(function(err){ console.error('cloud save (weeknet_history) failed', err); toast('⚠️ Cloud save தோல்வி — internet check பண்ணுங்க'); }); }
 }
 
 // ---------- Shop settings (name / address / GST / phone shown on bills) ----------
@@ -674,8 +1446,57 @@ function showApp(){
   document.getElementById('appShell').style.display = 'block';
   document.getElementById('curUsernameShow').value = adminCreds.username;
   renderShopHeader();
+  applyLanguagePreference();
   switchToScreen('dashboard');
+  checkRecurringExpenses();
   if(initFirebase()){ startCloudSync(); }
+}
+
+// ---------- Colour themes ----------
+const THEMES = [
+  {key:'',        label:'Emerald',  ta:'பச்சை',   c:['#0f7a5a','#0a5240']},
+  {key:'midnight',label:'Midnight', ta:'கருப்பு-நீலம்', c:['#000000','#2f8cff']},
+  {key:'ocean',   label:'Ocean',    ta:'நீலம்',    c:['#1769c2','#0d4a8f']},
+  {key:'teal',    label:'Teal',     ta:'தீல்',     c:['#0e7c86','#095860']},
+  {key:'royal',   label:'Royal',    ta:'ஊதா',     c:['#6a3fc4','#4a2a92']},
+  {key:'rose',    label:'Rose',     ta:'ரோஸ்',    c:['#c2255c','#8f1a43']},
+  {key:'charcoal',label:'Charcoal', ta:'சாம்பல்', c:['#3b4a5a','#232d38']}
+];
+function setTheme(key){
+  try{ if(key) localStorage.setItem('kb_theme', key); else localStorage.removeItem('kb_theme'); }catch(e){}
+  if(key) document.documentElement.setAttribute('data-theme', key); else document.documentElement.removeAttribute('data-theme');
+  renderThemeSwatches();
+  applyChartTheme();
+  try{ refreshVisibleScreen(); }catch(e){}
+}
+function applyChartTheme(){
+  if(typeof Chart === 'undefined') return;
+  const dark = document.documentElement.getAttribute('data-theme') === 'midnight';
+  Chart.defaults.color = dark ? '#b6c6da' : '#666';
+  Chart.defaults.borderColor = dark ? 'rgba(255,255,255,.08)' : 'rgba(0,0,0,.1)';
+}
+function renderThemeSwatches(){
+  const box = document.getElementById('themeSwatches');
+  if(!box) return;
+  const cur = localStorage.getItem('kb_theme') || '';
+  box.innerHTML = THEMES.map(t=>`
+    <div class="theme-swatch ${t.key===cur?'on':''}" onclick="setTheme('${t.key}')">
+      <i style="background:linear-gradient(135deg,${t.c[0]},${t.c[1]});"></i>${t.label}<span class="lang-tag" style="display:block;">${t.ta}</span>
+    </div>`).join('');
+}
+function applyLanguagePreference(){
+  const pref = localStorage.getItem('kb_lang_pref') || 'both';
+  document.body.classList.toggle('lang-ta-only', pref === 'ta');
+  const sel = document.getElementById('langPrefSelect');
+  if(sel) sel.value = pref;
+  renderThemeSwatches();
+  applyChartTheme();
+  const waToggle = document.getElementById('autoWhatsAppToggle');
+  if(waToggle) waToggle.checked = localStorage.getItem('autoWhatsApp') === 'on';
+}
+function setLanguagePreference(pref){
+  localStorage.setItem('kb_lang_pref', pref);
+  applyLanguagePreference();
 }
 function logout(){
   localStorage.removeItem(LS_SESSION);
@@ -711,7 +1532,8 @@ function switchToScreen(tabName){
   if(tabName==='history') renderHistory();
   if(tabName==='customers') renderCustomers();
   if(tabName==='reports') renderReports();
-  if(tabName==='settings') fillShopSettingsForm();
+  if(tabName==='expenses'){ renderExpenses(); renderIncome(); }
+  if(tabName==='settings'){ fillShopSettingsForm(); applyLanguagePreference(); }
 }
 
 function toggleSec(id){
@@ -723,9 +1545,37 @@ function toggleSec(id){
   if(isHidden) updateReportChart(id);
 }
 
+// ---------- Dashboard stats show/hide toggle (this browser only) ----------
+const LS_STATS_HIDDEN = 'kb_stats_hidden';
+function applyStatsVisibility(){
+  const hidden = localStorage.getItem(LS_STATS_HIDDEN) === '1';
+  const container = document.getElementById('statsContainer');
+  const note = document.getElementById('statsHiddenNote');
+  if(!container) return;
+  container.style.display = hidden ? 'none' : 'block';
+  if(note) note.style.display = hidden ? 'block' : 'none';
+}
+function toggleStatsVisibility(){
+  const hidden = localStorage.getItem(LS_STATS_HIDDEN) === '1';
+  localStorage.setItem(LS_STATS_HIDDEN, hidden ? '0' : '1');
+  applyStatsVisibility();
+}
+
 // ---------- Report charts (Chart.js) ----------
 const chartInstances = {};
-function drawBarChart(canvasId, labels, dataValues, seriesLabel, color){
+function setChartEmpty(canvasEl, on){
+  const wrapper = canvasEl.parentElement;
+  if(!wrapper) return;
+  let e = wrapper.querySelector('.chart-empty');
+  if(on){
+    if(!e){ e = document.createElement('div'); e.className = 'empty chart-empty'; e.textContent = 'தரவு இல்லை / No data yet'; wrapper.appendChild(e); }
+    canvasEl.style.display = 'none';
+  } else {
+    if(e) e.remove();
+    canvasEl.style.display = '';
+  }
+}
+function drawBarChart(canvasId, labels, dataValues, seriesLabel, color, autoSkip){
   const canvasEl = document.getElementById(canvasId);
   if(!canvasEl) return;
   const wrapper = canvasEl.parentElement;
@@ -734,11 +1584,11 @@ function drawBarChart(canvasId, labels, dataValues, seriesLabel, color){
     return;
   }
   if(chartInstances[canvasId]){ chartInstances[canvasId].destroy(); }
-  if(!labels.length){
-    if(wrapper) wrapper.innerHTML = '<div class="empty">தரவு இல்லை / No data yet</div>';
-    return;
-  }
+  if(!labels.length){ setChartEmpty(canvasEl, true); return; }
+  setChartEmpty(canvasEl, false);
   if(!canvasEl.isConnected || !wrapper) return;
+  canvasEl.style.width = '100%';
+  canvasEl.style.height = '100%';
   try{
     chartInstances[canvasId] = new Chart(canvasEl.getContext('2d'), {
       type: 'bar',
@@ -747,26 +1597,223 @@ function drawBarChart(canvasId, labels, dataValues, seriesLabel, color){
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { ticks: { autoSkip: false, maxRotation: 55, minRotation: 25, font: { size: 9 } } },
+          x: { ticks: { autoSkip: autoSkip === true, maxRotation: 55, minRotation: 25, font: { size: 9 } } },
           y: { beginAtZero: true }
         }
       }
     });
+    // force a re-measure right after creation — the very first chart drawn
+    // on a screen that just became visible can otherwise measure a stale
+    // (small / default) canvas size and render centered instead of full-width
+    requestAnimationFrame(function(){ if(chartInstances[canvasId]) chartInstances[canvasId].resize(); });
   } catch(e){
     console.error('Chart render error', canvasId, e);
     if(wrapper) wrapper.innerHTML = '<div class="empty">Chart காமிக்க முடியல் / Could not render chart</div>';
   }
 }
+function onLayoutReady(fn){
+  // waits for two animation frames so the browser has fully applied the
+  // display:block / layout change before Chart.js measures the canvas
+  requestAnimationFrame(function(){ requestAnimationFrame(fn); });
+}
 function updateReportChart(id){
   const d = window._reportChartData || {};
-  // small delay so the section's display:block change is fully laid out
-  // before Chart.js measures the canvas (avoids a zero-size chart)
-  setTimeout(function(){
+  onLayoutReady(function(){
     if(id === 'secTop' && d.top) drawBarChart('chartTop', d.top.labels, d.top.values, 'Units sold', '#0f6e51');
     if(id === 'secProfit' && d.profit) drawBarChart('chartProfit', d.profit.labels, d.profit.values, 'Profit (₹)', '#e8792b');
     if(id === 'secStockVal' && d.stockVal) drawBarChart('chartStockVal', d.stockVal.labels, d.stockVal.values, 'Stock value (₹)', '#3454d1');
     if(id === 'secCustRep' && d.custRep) drawBarChart('chartCustRep', d.custRep.labels, d.custRep.values, 'Total spent (₹)', '#c0392b');
-  }, 30);
+  });
+}
+
+// ---------- Top-of-Reports dashboard: donut + monthly trend charts ----------
+function drawDoughnutChart(canvasId, labels, dataValues, colors){
+  const canvasEl = document.getElementById(canvasId);
+  if(!canvasEl) return;
+  const wrapper = canvasEl.parentElement;
+  if(typeof Chart === 'undefined'){
+    if(wrapper) wrapper.innerHTML = '<div class="empty">📉 Chart library load ஆகல் — Internet connection check பண்ணி page-ஐ refresh பண்ணுங்க<br>Chart library failed to load — check your internet and refresh</div>';
+    return;
+  }
+  if(chartInstances[canvasId]){ chartInstances[canvasId].destroy(); }
+  if(!labels.length || dataValues.every(v=>v===0)){ setChartEmpty(canvasEl, true); return; }
+  setChartEmpty(canvasEl, false);
+  if(!canvasEl.isConnected || !wrapper) return;
+  canvasEl.style.width = '100%';
+  canvasEl.style.height = '100%';
+  try{
+    chartInstances[canvasId] = new Chart(canvasEl.getContext('2d'), {
+      type: 'doughnut',
+      data: { labels: labels, datasets: [{ data: dataValues, backgroundColor: colors, borderWidth: 2, borderColor: '#fff' }] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } }
+      }
+    });
+    requestAnimationFrame(function(){ if(chartInstances[canvasId]) chartInstances[canvasId].resize(); });
+  } catch(e){
+    console.error('Chart render error', canvasId, e);
+    if(wrapper) wrapper.innerHTML = '<div class="empty">Chart காமிக்க முடியல் / Could not render chart</div>';
+  }
+}
+function monthKeyOf(dateStr){
+  const d = new Date(dateStr);
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+}
+function monthLabelOf(key){
+  const parts = key.split('-');
+  const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, 1);
+  return d.toLocaleDateString('en-IN',{month:'short',year:'2-digit'});
+}
+function lastNMonthKeys(n){
+  const keys = [];
+  const now = new Date();
+  for(let i=n-1;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    keys.push(d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'));
+  }
+  return keys;
+}
+function dayKeyOf(dateLike){
+  const d = new Date(dateLike);
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+// null = monthly view (old behaviour); otherwise {from, to} local dates (day-wise view)
+function getReportRange(){
+  const sel = document.getElementById('repView');
+  const v = sel ? sel.value : 'month';
+  if(v === 'month') return null;
+  const now = new Date();
+  const sod = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  let from = sod(now), to = sod(now);
+  if(v === 'd7') from.setDate(from.getDate()-6);
+  else if(v === 'd30') from.setDate(from.getDate()-29);
+  else if(v === 'thismonth') from = new Date(now.getFullYear(), now.getMonth(), 1);
+  else if(v === 'lastmonth'){ from = new Date(now.getFullYear(), now.getMonth()-1, 1); to = new Date(now.getFullYear(), now.getMonth(), 0); }
+  else {
+    const f = document.getElementById('repFrom').value, t = document.getElementById('repTo').value;
+    from = f ? new Date(f+'T00:00:00') : sod(now);
+    to = t ? new Date(t+'T00:00:00') : from;
+    if(from > to){ const x = from; from = to; to = x; }
+    const maxSpan = 365*86400000; // keep the chart readable: max ~1 year
+    if(to - from > maxSpan) from = new Date(to.getTime() - maxSpan);
+  }
+  return { from, to };
+}
+function setRepView(v){
+  document.getElementById('repView').value = v;
+  document.querySelectorAll('#repChips .rep-chip').forEach(c=> c.classList.toggle('active', c.dataset.v === v));
+  document.getElementById('repCustomRange').style.display = v === 'custom' ? 'flex' : 'none';
+  if(v === 'custom'){
+    const todayStr = new Date().toLocaleDateString('en-CA');
+    const f = document.getElementById('repFrom'), t = document.getElementById('repTo');
+    if(!f.value) f.value = todayStr;
+    if(!t.value) t.value = todayStr;
+  }
+  renderDashboardCharts();
+}
+function renderDashboardCharts(){
+  const range = getReportRange();
+  const fmtDay = d => d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  const setTxt = (id,t)=>{ const el = document.getElementById(id); if(el) el.textContent = t; };
+  setTxt('repTitleSales', range ? '📈 தின விற்பனை போக்கு / Daily Sales Trend' : '📈 மாத விற்பனை போக்கு / Monthly Sales Trend');
+  setTxt('repTitleProfit', range ? '💹 தின லாப போக்கு / Daily Profit Trend' : '💹 மாத லாப போக்கு / Monthly Profit Trend');
+  setTxt('repTitleBills', range ? '🧾 தின பில் எண்ணிக்கை / Daily Bills Count' : '🧾 மாத பில் எண்ணிக்கை / Monthly Bills Count');
+
+  // bills that feed the two donuts: all-time in monthly view, only the chosen days in day-wise view
+  const scopedBills = range
+    ? bills.filter(b=>{ const k = dayKeyOf(b.date); return k >= dayKeyOf(range.from) && k <= dayKeyOf(range.to); })
+    : bills;
+  const scopedExpenses = range
+    ? expenses.filter(e=>{ const k = dayKeyOf(e.date); return k >= dayKeyOf(range.from) && k <= dayKeyOf(range.to); })
+    : expenses;
+  const scopedLendings = range
+    ? lendings.filter(x=>{ const k = dayKeyOf(x.date); return k >= dayKeyOf(range.from) && k <= dayKeyOf(range.to); })
+    : lendings;
+  setTxt('repRangeNote', range
+    ? `${fmtDay(range.from)}${dayKeyOf(range.from)===dayKeyOf(range.to) ? '' : ' – '+fmtDay(range.to)} · ${scopedBills.length} bills · ₹${scopedBills.reduce((s,b)=>s+b.total,0)}`
+    : 'Tiles, Payment & Top Products = all-time · Trends = last 6 months');
+  // summary tiles for the selected scope
+  let tSales = 0, tProfit = 0;
+  scopedBills.forEach(b=>{
+    tSales += b.total;
+    b.items.forEach(it=>{
+      const prod = products.find(x=>x.id===it.id);
+      if(prod && prod.cost!==null && prod.cost!==undefined){ tProfit += (it.price - prod.cost) * it.qty; }
+    });
+  });
+  setTxt('repStatSales', '₹'+tSales);
+  setTxt('repStatProfit', '₹'+tProfit);
+  setTxt('repStatBills', scopedBills.length);
+  setTxt('repStatAvg', '₹'+(scopedBills.length ? Math.round(tSales/scopedBills.length) : 0));
+  setTxt('repStatNetCash', '₹'+netCashFlow(scopedBills, scopedExpenses, scopedLendings));
+  setTxt('repStatExpGiven', '₹'+(scopedExpenses.reduce((s,e)=>s+e.amount,0) + scopedLendings.filter(x=>x.type==='given').reduce((s,x)=>s+x.amount,0)));
+
+  onLayoutReady(function(){
+    // 1) Sales by Payment Method (donut)
+    let cash=0, upi=0, card=0, other=0;
+    scopedBills.forEach(b=>{
+      const p = b.payment;
+      if(!p || (Array.isArray(p) && p.length===0)){ other += b.total; }
+      else if(typeof p === 'string'){
+        if(p==='Cash') cash+=b.total; else if(p==='UPI') upi+=b.total; else if(p==='Card') card+=b.total;
+      } else if(Array.isArray(p)){
+        p.forEach(entry=>{
+          if(entry.method==='Cash') cash += entry.amount||0;
+          else if(entry.method==='UPI') upi += entry.amount||0;
+          else if(entry.method==='Card') card += entry.amount||0;
+        });
+      }
+    });
+    const payLabels=[], payValues=[], payColors=[];
+    if(cash>0){ payLabels.push('Cash'); payValues.push(cash); payColors.push('#0f6e51'); }
+    if(upi>0){ payLabels.push('UPI'); payValues.push(upi); payColors.push('#3454d1'); }
+    if(card>0){ payLabels.push('Card'); payValues.push(card); payColors.push('#e8792b'); }
+    if(other>0){ payLabels.push('Not specified'); payValues.push(other); payColors.push('#9aa5a2'); }
+    drawDoughnutChart('chartPayDonut', payLabels, payValues, payColors);
+
+    // 2) Sales / Profit / Bills trend — per day (day-wise view) or last 6 months
+    let keys, keyOf, labels;
+    if(range){
+      keys = [];
+      for(let d = new Date(range.from); d <= range.to; d.setDate(d.getDate()+1)) keys.push(dayKeyOf(d));
+      keyOf = dayKeyOf;
+      labels = keys.map(k=>{ const q = k.split('-'); return new Date(+q[0], +q[1]-1, +q[2]).toLocaleDateString('en-IN',{day:'2-digit',month:'short'}); });
+    } else {
+      keys = lastNMonthKeys(6);
+      keyOf = monthKeyOf;
+      labels = keys.map(monthLabelOf);
+    }
+    const sales = {}, profit = {}, cnt = {};
+    keys.forEach(k=>{ sales[k]=0; profit[k]=0; cnt[k]=0; });
+    bills.forEach(b=>{
+      const k = keyOf(b.date);
+      if(sales.hasOwnProperty(k)){
+        sales[k] += b.total;
+        cnt[k] += 1;
+        b.items.forEach(it=>{
+          const prod = products.find(x=>x.id===it.id);
+          if(prod && prod.cost!==null && prod.cost!==undefined){ profit[k] += (it.price - prod.cost) * it.qty; }
+        });
+      }
+    });
+    const skip = !!range && keys.length > 31;
+    drawBarChart('chartSalesTrend', labels, keys.map(k=>sales[k]), 'Sales (₹)', '#3454d1', skip);
+    drawBarChart('chartProfitTrend', labels, keys.map(k=>profit[k]), 'Profit (₹)', '#0f6e51', skip);
+    drawBarChart('chartBillsTrend', labels, keys.map(k=>cnt[k]), 'Bills', '#e8792b', skip);
+
+    // 3) Top Products Share (donut, top 4 by revenue + Others)
+    const tally = {};
+    scopedBills.forEach(b=> b.items.forEach(it=>{ tally[it.name] = (tally[it.name]||0) + it.price*it.qty; }));
+    const sortedProducts = Object.entries(tally).sort((a,b)=>b[1]-a[1]);
+    const top4 = sortedProducts.slice(0,4);
+    const othersTotal = sortedProducts.slice(4).reduce((s,[,v])=>s+v,0);
+    const topLabels = top4.map(([n])=>n);
+    const topValues = top4.map(([,v])=>v);
+    const topColors = ['#0f6e51','#3454d1','#e8792b','#c0392b','#9aa5a2'];
+    if(othersTotal>0){ topLabels.push('Others'); topValues.push(othersTotal); }
+    drawDoughnutChart('chartTopDonut', topLabels, topValues, topColors);
+  });
 }
 
 // ---------- Billing: item search / add ----------
@@ -779,10 +1826,39 @@ itemSearch.addEventListener('keydown', function(e){
     if(match){ addToBill(match.id); }
   }
 });
+
+// ---------- Keyboard shortcuts for fast billing ----------
+// F2 = jump to Billing screen and focus the item search box (start a new sale fast)
+// F9 = Complete/Update the current bill
+// Esc = Cancel the current bill (only while on the Billing screen)
+document.addEventListener('keydown', function(e){
+  if(e.key === 'F2'){
+    e.preventDefault();
+    switchToScreen('billing');
+    const el = document.getElementById('itemSearch');
+    if(el) el.focus();
+  } else if(e.key === 'F9'){
+    e.preventDefault();
+    const billingScreen = document.getElementById('billing');
+    if(billingScreen && billingScreen.classList.contains('active')) saveBill();
+  } else if(e.key === 'Escape'){
+    const billingScreen = document.getElementById('billing');
+    if(billingScreen && billingScreen.classList.contains('active')) cancelCurrentBill();
+  }
+});
 function renderSearchResults(){
-  const q = itemSearch.value.trim().toLowerCase();
+  const raw = itemSearch.value;
+  const q = raw.trim().toLowerCase();
   const box = document.getElementById('searchResults');
   if(!q){ box.innerHTML=''; return; }
+  // Auto-select: if the typed/scanned text exactly matches a barcode, add it
+  // to the bill immediately — no need to press Enter.
+  const exactBarcodeMatch = products.find(p => p.barcode && p.barcode === raw.trim());
+  if(exactBarcodeMatch){
+    addToBill(exactBarcodeMatch.id);
+    toast(`✅ ${exactBarcodeMatch.name} bill-க்கு சேர்க்கப்பட்டது / added to bill`);
+    return;
+  }
   const matches = products.filter(p=>
     p.name.toLowerCase().includes(q) || (p.barcode||'').toLowerCase() === q
   ).slice(0,6);
@@ -857,6 +1933,7 @@ function renderBillItems(){
       </div>
     `;}).join('');
   }
+  document.getElementById('billItemsCount').textContent = currentBillItems.reduce((s,it)=>s+it.qty,0);
   const subtotal = currentBillItems.reduce((s,it)=>s+it.price*it.qty,0);
   const discountPct = getDiscountPercent();
   const discountAmt = Math.round(subtotal * discountPct / 100);
@@ -1010,6 +2087,9 @@ function saveBill(){
   bills.unshift(bill);
   saveBills(bills);
   showBillModal(bill);
+  if(phone && localStorage.getItem('autoWhatsApp') === 'on'){
+    sendBillOnWhatsApp(bill);
+  }
 
   currentBillItems = []; selectedPayMethods = []; paySplitAmounts = {};
   document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected'));
@@ -1039,8 +2119,19 @@ function editBill(id){
   switchToScreen('billing');
   const btn = document.getElementById('saveBillBtn');
   btn.textContent = '✏️ பில் மாற்று / Update Bill';
-  document.getElementById('cancelEditBtn').style.display = 'block';
+  document.getElementById('cancelEditBtn').textContent = '✕ Edit ரத்து / Cancel Edit';
   toast('Bill edit பண்ணலாம் / Editing bill');
+}
+// Button handler: asks for confirmation before wiping out whatever is on the
+// current bill (new bill or one being edited). Skips the confirm popup if
+// there's nothing to lose.
+function cancelCurrentBill(){
+  const hasContent = currentBillItems.length>0 || document.getElementById('custName').value.trim() || document.getElementById('custPhone').value.trim();
+  if(hasContent && !confirm('இந்த பில்-ல சேர்த்த பொருட்கள் எல்லாம் நீக்கப்படும். உறுதியா?\nThis will clear everything on the current bill. Are you sure?')){
+    return;
+  }
+  cancelEdit();
+  if(hasContent) toast('🗑️ பில் ரத்து செய்யப்பட்டது / Bill cancelled');
 }
 function cancelEdit(){
   editingBillId = null; currentBillItems = []; selectedPayMethods = []; paySplitAmounts = {};
@@ -1051,7 +2142,7 @@ function cancelEdit(){
   document.getElementById('cashChangeBox').innerHTML = '';
   renderBillItems();
   document.getElementById('saveBillBtn').textContent = '✅ பில் முடி / Complete Bill';
-  document.getElementById('cancelEditBtn').style.display = 'none';
+  document.getElementById('cancelEditBtn').textContent = '🗑️ பில் ரத்து / Cancel Bill';
 }
 
 // ---------- Bill modal / WhatsApp / print ----------
@@ -1152,6 +2243,7 @@ async function addProduct(){
   const stock = parseInt(document.getElementById('newItemStock').value) || 0;
   const low = parseInt(document.getElementById('newItemLow').value) || 5;
   const barcode = document.getElementById('newItemBarcode').value.trim() || null;
+  const category = document.getElementById('newItemCategory').value.trim() || '';
   if(!name || isNaN(price)){ toast('பெயர் & விலை போடவும் / Enter name & price'); return; }
   if(barcode && products.some(p=>p.barcode===barcode)){ toast('இந்த Barcode ஏற்கனவே இருக்கு / Barcode already used'); return; }
   const imageInput = document.getElementById('newItemImage');
@@ -1160,9 +2252,10 @@ async function addProduct(){
     try{ image = await resizeImageToDataUrl(imageInput.files[0], 200); }
     catch(e){ console.error('image resize failed', e); toast('படம் சேர்க்க முடியல் / Could not add image, product saved without it'); }
   }
-  products.push({id:'p'+Date.now(),name,price,cost,stock,low,barcode,image});
+  products.push({id:'p'+Date.now(),name,price,cost,stock,low,barcode,image,category});
+  if(stock>0) logStockChange(products[products.length-1], stock, 'Opening stock');
   saveProducts(products);
-  ['newItemName','newItemPrice','newItemCost','newItemStock','newItemBarcode'].forEach(id=>document.getElementById(id).value='');
+  ['newItemName','newItemPrice','newItemCost','newItemStock','newItemBarcode','newItemCategory'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('newItemLow').value='5';
   if(imageInput) imageInput.value='';
   renderProducts();
@@ -1177,7 +2270,12 @@ function deleteProduct(id){
 function adjustStock(id,delta){
   const p = products.find(x=>x.id===id);
   if(!p) return;
+  const before = p.stock;
   p.stock = Math.max(0, p.stock+delta);
+  if(p.stock !== before){
+    const reasonEl = document.getElementById('stockReason');
+    logStockChange(p, p.stock-before, reasonEl ? reasonEl.value : 'Correction');
+  }
   saveProducts(products);
   renderProducts();
 }
@@ -1210,13 +2308,122 @@ async function saveProductEdit(id){
   p.cost = costV ? (parseFloat(costV) || 0) : null;
   p.low = low;
   p.barcode = barcode;
+  p.category = (document.getElementById('edCategory-'+id).value || '').trim();
   saveProducts(products);
   renderProducts();
   toast('பொருள் மாற்றப்பட்டது / Product updated');
 }
+
+// ---------- Stock helpers: barcode generator, category controls, low-stock filter, stock log, bulk import ----------
+function generateUniqueBarcode(){
+  // EAN-13 style (prefix 20 = in-store use) with a valid check digit; loops until unused.
+  for(let attempt=0; attempt<50; attempt++){
+    let body = '20' + String(Date.now()).slice(-7) + String(Math.floor(Math.random()*900)+100);
+    body = body.slice(0,12);
+    let sum = 0;
+    for(let i=0;i<12;i++){ sum += parseInt(body[i]) * (i%2===0 ? 1 : 3); }
+    const code = body + ((10 - (sum % 10)) % 10);
+    if(!products.some(p=>p.barcode===code)) return code;
+  }
+  return String(Date.now());
+}
+function refreshCategoryControls(){
+  const cats = Array.from(new Set(products.map(p=>(p.category||'').trim()).filter(Boolean))).sort();
+  const dl = document.getElementById('categoryList');
+  if(dl) dl.innerHTML = cats.map(c=>`<option value="${escapeHtml(c)}">`).join('');
+  const sel = document.getElementById('productCategoryFilter');
+  if(sel){
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">📂 எல்லா வகையும் / All Categories</option>' + cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    sel.value = cats.includes(cur) ? cur : '';
+  }
+}
+function toggleLowOnly(){ window._lowOnly = !window._lowOnly; renderProducts(); }
+
+const LS_STOCKLOG = 'kb_stocklog';
+let stockLog = (function(){ try{ return JSON.parse(localStorage.getItem(LS_STOCKLOG)) || []; }catch(e){ return []; } })();
+function saveStockLog(){
+  if(stockLog.length > 300) stockLog = stockLog.slice(0,300);
+  localStorage.setItem(LS_STOCKLOG, JSON.stringify(stockLog));
+  if(db){ db.collection('zha_bill_store').doc('stocklog').set({ list: stockLog, updatedAt: new Date().toISOString() }).catch(function(e){ console.error('cloud save (stocklog) failed', e); }); }
+}
+function logStockChange(p, delta, reason){
+  stockLog.unshift({ date:new Date().toISOString(), id:p.id, name:p.name, delta, after:p.stock, reason });
+  saveStockLog();
+}
+function renderStockLog(){
+  const box = document.getElementById('stockLogList');
+  if(!box) return;
+  box.innerHTML = stockLog.length===0 ? '<div class="empty">இன்னும் மாற்றம் இல்லை / No adjustments yet</div>' :
+    stockLog.slice(0,50).map(l=>`
+      <div class="item-row">
+        <div><div class="item-name">${escapeHtml(l.name)}</div><div class="item-sub">${new Date(l.date).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})} · ${escapeHtml(l.reason)} · Stock → ${l.after}</div></div>
+        <div class="item-name" style="color:${l.delta>=0?'#0f6e51':'#c0392b'};">${l.delta>0?'+':''}${l.delta}</div>
+      </div>`).join('');
+}
+function importProductsFromFile(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  if(typeof XLSX === 'undefined'){ toast('Excel library load ஆகல / Excel library not loaded'); event.target.value=''; return; }
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const wb = XLSX.read(e.target.result, {type:'array'});
+      const sheetName = wb.SheetNames.includes('Stock') ? 'Stock' : wb.SheetNames[0];
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], {defval:''});
+      const pick = (r, keys) => { for(const k of keys){ const f = Object.keys(r).find(x=>x.trim().toLowerCase()===k); if(f!==undefined && r[f]!=='') return r[f]; } return ''; };
+      let added=0, updated=0, skipped=0;
+      rows.forEach(r=>{
+        const name = String(pick(r,['product','name','item','product name']) || '').trim();
+        const price = parseFloat(pick(r,['price','selling price']));
+        if(!name || isNaN(price)){ skipped++; return; }
+        const costV = pick(r,['cost','buying price']);
+        const cost = costV==='' ? null : (parseFloat(costV)||0);
+        const stockV = pick(r,['stock','qty','quantity']);
+        const stock = stockV==='' ? null : (parseInt(stockV)||0);
+        const lowV = pick(r,['low stock alert','low','low stock']);
+        const low = lowV==='' ? null : (parseInt(lowV)||0);
+        const barcode = String(pick(r,['barcode']) || '').trim() || null;
+        const category = String(pick(r,['category','வகை']) || '').trim();
+        let ex = (barcode && products.find(p=>p.barcode===barcode)) || products.find(p=>p.name.toLowerCase()===name.toLowerCase());
+        if(ex){
+          const before = ex.stock;
+          ex.price = price;
+          if(cost!==null) ex.cost = cost;
+          if(stock!==null) ex.stock = stock;
+          if(low!==null) ex.low = low;
+          if(barcode) ex.barcode = barcode;
+          if(category) ex.category = category;
+          if(ex.stock !== before) logStockChange(ex, ex.stock-before, 'Excel import');
+          updated++;
+        } else {
+          const np = {id:'p'+Date.now()+Math.random().toString(36).slice(2,6),name,price,cost,stock:stock||0,low:low===null?5:low,barcode,image:null,category};
+          products.push(np);
+          if(np.stock>0) logStockChange(np, np.stock, 'Excel import');
+          added++;
+        }
+      });
+      saveProducts(products);
+      renderProducts();
+      toast(`✅ Import முடிந்தது: ${added} புதுசு, ${updated} update, ${skipped} skip / ${added} added, ${updated} updated, ${skipped} skipped`);
+    }catch(err){ console.error(err); toast('Import தோல்வி — file format பாருங்க / Import failed — check file format'); }
+  };
+  reader.readAsArrayBuffer(file);
+  event.target.value = '';
+}
 function renderProducts(){
   const q = (document.getElementById('productSearch').value||'').toLowerCase();
-  const list = products.filter(p=>p.name.toLowerCase().includes(q));
+  refreshCategoryControls();
+  const catSel = document.getElementById('productCategoryFilter');
+  const catFilter = catSel ? catSel.value : '';
+  const list = products.filter(p=>
+    p.name.toLowerCase().includes(q) &&
+    (!catFilter || (p.category||'') === catFilter) &&
+    (!window._lowOnly || p.stock <= p.low)
+  );
+  renderStockLog();
+  const lowBtn = document.getElementById('lowOnlyBtn');
+  if(lowBtn){ lowBtn.classList.toggle('btn-primary', !!window._lowOnly); lowBtn.classList.toggle('btn-outline', !window._lowOnly); }
   const box = document.getElementById('productList');
   if(list.length===0){ box.innerHTML = '<div class="empty">பொருட்கள் இல்லை / No products</div>'; return; }
   box.innerHTML = list.map(p=>`
@@ -1226,7 +2433,7 @@ function renderProducts(){
           ${productThumbHtml(p,42)}
           <div style="min-width:0;">
             <div class="item-name">${escapeHtml(p.name)} ${p.stock<=p.low?'<span class="badge badge-low">குறைவு/LOW</span>':'<span class="badge badge-ok">OK</span>'}</div>
-            <div class="item-sub">₹${p.price}${(p.cost!==null && p.cost!==undefined) ? (' · Cost: ₹'+p.cost) : ''} · ஸ்டாக்: ${p.stock}${p.barcode ? (' · #'+escapeHtml(p.barcode)) : ''}</div>
+            <div class="item-sub">${p.category ? ('📂 '+escapeHtml(p.category)+' · ') : ''}₹${p.price}${(p.cost!==null && p.cost!==undefined) ? (' · Cost: ₹'+p.cost) : ''} · ஸ்டாக்: ${p.stock}${p.barcode ? (' · #'+escapeHtml(p.barcode)) : ''}</div>
           </div>
         </div>
         <div class="qty-box">
@@ -1251,8 +2458,10 @@ function renderProducts(){
         </div>
         <div class="row">
           <div><label>Low stock alert</label><input id="edLow-${p.id}" type="number" value="${p.low}"></div>
-          <div><label>Barcode</label><input id="edBarcode-${p.id}" value="${p.barcode ? escapeHtml(p.barcode) : ''}"></div>
+          <div><label>Barcode</label><div style="display:flex;gap:6px;"><input id="edBarcode-${p.id}" value="${p.barcode ? escapeHtml(p.barcode) : ''}" style="margin-bottom:0;"><button type="button" class="btn-outline btn-small" style="flex-shrink:0;" onclick="document.getElementById('edBarcode-${p.id}').value=generateUniqueBarcode()">🎲</button></div></div>
         </div>
+        <label>வகை / Category</label>
+        <input id="edCategory-${p.id}" list="categoryList" value="${p.category ? escapeHtml(p.category) : ''}">
         <button class="btn-primary" onclick="saveProductEdit('${p.id}')">💾 சேமி / Save Changes</button>
       </div>
     </div>
@@ -1260,11 +2469,81 @@ function renderProducts(){
 }
 
 // ---------- Bill History ----------
+// ---------- Shared date-range bar (Dashboard, Bill History, Expenses) ----------
+const RANGE_LABELS = {all:'All', today:'Today', yesterday:'Yesterday', week:'This Week', d7:'7 Days', d30:'30 Days', thismonth:'This Month', lastmonth:'Last Month', custom:'🗓️ Custom'};
+const RANGE_STATE = {};
+const RANGE_REFRESH = { dash:()=>renderDashboard(), hist:()=>renderHistory(), exp:()=>renderExpenses(), inc:()=>renderIncome() };
+// returns {from,to} (local dates) or null for "all"
+function dateRangeOf(v, f, t){
+  if(v === 'all') return null;
+  const now = new Date();
+  const sod = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  let from = sod(now), to = sod(now);
+  if(v === 'yesterday'){ from.setDate(from.getDate()-1); to = new Date(from); }
+  else if(v === 'week') from.setDate(from.getDate()-now.getDay());
+  else if(v === 'd7') from.setDate(from.getDate()-6);
+  else if(v === 'd30') from.setDate(from.getDate()-29);
+  else if(v === 'thismonth') from = new Date(now.getFullYear(), now.getMonth(), 1);
+  else if(v === 'lastmonth'){ from = new Date(now.getFullYear(), now.getMonth()-1, 1); to = new Date(now.getFullYear(), now.getMonth(), 0); }
+  else if(v === 'custom'){
+    from = f ? new Date(f+'T00:00:00') : sod(now);
+    to = t ? new Date(t+'T00:00:00') : from;
+    if(from > to){ const x = from; from = to; to = x; }
+  }
+  return { from, to };
+}
+function inDateRange(dateLike, r){
+  if(!r) return true;
+  const k = dayKeyOf(dateLike);
+  return k >= dayKeyOf(r.from) && k <= dayKeyOf(r.to);
+}
+function rangeOf(key){
+  const st = RANGE_STATE[key];
+  return st ? dateRangeOf(st.v, st.f, st.t) : null;
+}
+function setRangeNote(key, text){
+  const el = document.getElementById(key+'RangeNote');
+  if(el) el.textContent = text;
+}
+function initRangeBars(){
+  document.querySelectorAll('.rangebar').forEach(el=>{
+    const key = el.dataset.key;
+    RANGE_STATE[key] = { v: el.dataset.default || 'all', f:'', t:'' };
+    el.innerHTML =
+      '<div class="rep-chips">' + el.dataset.chips.split(',').map(v=>
+        `<button class="rep-chip${v===RANGE_STATE[key].v?' active':''}" data-v="${v}" onclick="pickRange('${key}','${v}')">${RANGE_LABELS[v]}</button>`).join('') + '</div>' +
+      `<div class="rep-custom" id="${key}Custom">
+         <div><label>From</label><input type="date" id="${key}From" onchange="pickRange('${key}','custom',true)"></div>
+         <div><label>To</label><input type="date" id="${key}To" onchange="pickRange('${key}','custom',true)"></div>
+       </div>` +
+      (el.dataset.note ? `<div class="rep-range-note" id="${key}RangeNote"></div>` : '');
+  });
+}
+function pickRange(key, v, fromInput){
+  const st = RANGE_STATE[key];
+  st.v = v;
+  const bar = document.querySelector('.rangebar[data-key="'+key+'"]');
+  bar.querySelectorAll('.rep-chip').forEach(c=> c.classList.toggle('active', c.dataset.v === v));
+  document.getElementById(key+'Custom').style.display = v === 'custom' ? 'flex' : 'none';
+  const f = document.getElementById(key+'From'), t = document.getElementById(key+'To');
+  if(v === 'custom' && !fromInput){
+    const today = new Date().toLocaleDateString('en-CA');
+    if(!f.value) f.value = today;
+    if(!t.value) t.value = today;
+  }
+  st.f = f.value; st.t = t.value;
+  if(RANGE_REFRESH[key]) RANGE_REFRESH[key]();
+}
+initRangeBars();
+
 function renderHistory(){
   const q = (document.getElementById('historySearch').value||'').toLowerCase();
+  const histRange = rangeOf('hist');
   const filtered = bills.filter(b =>
-    !q || b.customer.toLowerCase().includes(q) || (b.phone||'').includes(q)
+    inDateRange(b.date, histRange) &&
+    (!q || b.customer.toLowerCase().includes(q) || (b.phone||'').includes(q))
   );
+  setRangeNote('hist', filtered.length + ' bills · ₹' + filtered.reduce((sum,b)=>sum+b.total,0));
   const box = document.getElementById('historyList');
   if(filtered.length===0){ box.innerHTML = '<div class="empty">இன்னும் பில் இல்லை<br>No bills found</div>'; return; }
   box.innerHTML = filtered.map(b=>{
@@ -1365,15 +2644,48 @@ function showCustomerModal(c){
 function closeCustModal(){ document.getElementById('custModalBg').classList.remove('show'); }
 
 // ---------- Dashboard ----------
+function getPeriodBills(){
+  const r = rangeOf('dash');
+  return bills.filter(b=> inDateRange(b.date, r));
+}
 function renderDashboard(){
+  applyStatsVisibility();
   const today = new Date().toDateString();
   const todaysBills = bills.filter(b=> new Date(b.date).toDateString()===today);
-  const todayTotal = todaysBills.reduce((s,b)=>s+b.total,0);
   const allTotal = bills.reduce((s,b)=>s+b.total,0);
   const lowStock = products.filter(p=>p.stock<=p.low).length;
 
-  document.getElementById('statToday').textContent = '₹'+todayTotal;
-  document.getElementById('statBills').textContent = bills.length;
+  // top summary row — respects the period dropdown (Today / Yesterday / Week / Month / Last Month / Custom / All-time)
+  const periodBills = getPeriodBills();
+  const periodSales = periodBills.reduce((s,b)=>s+b.total,0);
+  const avgBill = periodBills.length ? Math.round(periodSales / periodBills.length) : 0;
+  document.getElementById('dashStatSales').textContent = '₹'+periodSales;
+  document.getElementById('dashStatBills').textContent = periodBills.length;
+  document.getElementById('dashStatProducts').textContent = products.length;
+  document.getElementById('dashStatAvg').textContent = '₹'+avgBill;
+  const dashRange = rangeOf('dash');
+  const periodExpenses = expenses.filter(e=> inDateRange(e.date, dashRange));
+  const periodLendings = lendings.filter(x=> inDateRange(x.date, dashRange));
+  document.getElementById('dashStatNetCash').textContent = '₹'+netCashFlow(periodBills, periodExpenses, periodLendings);
+  document.getElementById('dashStatPending').textContent = '₹'+lendingPeople().reduce((s,p)=>s+Math.max(p.balance,0),0);
+
+  // recent bills table (latest 5, regardless of the period filter above)
+  const recentBills = bills.slice().sort((a,b)=> new Date(b.date) - new Date(a.date)).slice(0,5);
+  const recentBody = document.getElementById('recentBillsBody');
+  recentBody.innerHTML = recentBills.length===0
+    ? '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:14px;">பில் இல்லை / No bills yet</td></tr>'
+    : recentBills.map(b=>{
+        const payLabel = formatPayment(b.payment).replace('💰 ','') || '—';
+        return `<tr>
+          <td>#${b.id.slice(-4)}</td>
+          <td>${escapeHtml(b.customer)}</td>
+          <td>₹${b.total}</td>
+          <td>${escapeHtml(payLabel)}</td>
+          <td>${new Date(b.date).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})}</td>
+        </tr>`;
+      }).join('');
+
+  // detailed stats (hidden by default toggle)
   document.getElementById('statTotalSales').textContent = '₹'+allTotal;
   document.getElementById('statLowStock').textContent = lowStock;
 
@@ -1387,8 +2699,56 @@ function renderDashboard(){
 
   document.getElementById('statProfit').textContent = '₹'+totalProfitAll();
   document.getElementById('payBreakdown').innerHTML = paymentBreakdownHtml(todaysBills, "இன்று / Today's Sales");
+
+  renderDashboardTopCharts();
 }
 
+function renderDashboardTopCharts(){
+  onLayoutReady(function(){
+    // Monthly Sales trend — last 6 months
+    const monthKeys = lastNMonthKeys(6);
+    const salesByMonth = {};
+    monthKeys.forEach(k=>{ salesByMonth[k]=0; });
+    bills.forEach(b=>{
+      const k = monthKeyOf(b.date);
+      if(salesByMonth.hasOwnProperty(k)) salesByMonth[k] += b.total;
+    });
+    const monthLabels = monthKeys.map(monthLabelOf);
+    drawBarChart('chartDashSales', monthLabels, monthKeys.map(k=>salesByMonth[k]), 'Sales (₹)', '#3454d1');
+
+    // Payment Methods donut (all-time)
+    let cash=0, upi=0, card=0, other=0;
+    bills.forEach(b=>{
+      const p = b.payment;
+      if(!p || (Array.isArray(p) && p.length===0)){ other += b.total; }
+      else if(typeof p === 'string'){
+        if(p==='Cash') cash+=b.total; else if(p==='UPI') upi+=b.total; else if(p==='Card') card+=b.total;
+      } else if(Array.isArray(p)){
+        p.forEach(entry=>{
+          if(entry.method==='Cash') cash += entry.amount||0;
+          else if(entry.method==='UPI') upi += entry.amount||0;
+          else if(entry.method==='Card') card += entry.amount||0;
+        });
+      }
+    });
+    const payLabels=[], payValues=[], payColors=[];
+    if(cash>0){ payLabels.push('Cash'); payValues.push(cash); payColors.push('#0f6e51'); }
+    if(upi>0){ payLabels.push('UPI'); payValues.push(upi); payColors.push('#3454d1'); }
+    if(card>0){ payLabels.push('Card'); payValues.push(card); payColors.push('#e8792b'); }
+    if(other>0){ payLabels.push('Not specified'); payValues.push(other); payColors.push('#9aa5a2'); }
+    drawDoughnutChart('chartDashPay', payLabels, payValues, payColors);
+  });
+}
+
+function netCashFlow(billsArr, expensesArr, lendingsArr){
+  const sales = billsArr.reduce((s,b)=>s+b.total,0);
+  const exp = expensesArr.reduce((s,e)=>s+e.amount,0);
+  const given = lendingsArr.filter(x=>x.type==='given').reduce((s,x)=>s+x.amount,0);
+  const received = lendingsArr.filter(x=>x.type!=='given').reduce((s,x)=>s+x.amount,0);
+  return sales - exp - given + received;
+}
+function totalGivenAll(){ return lendings.filter(x=>x.type==='given').reduce((s,x)=>s+x.amount,0); }
+function totalReceivedAll(){ return lendings.filter(x=>x.type!=='given').reduce((s,x)=>s+x.amount,0); }
 function totalProfitAll(){
   let totalProfit = 0;
   bills.forEach(b=>{
@@ -1398,6 +2758,534 @@ function totalProfitAll(){
     });
   });
   return totalProfit;
+}
+
+// ---------- Expenses (shop rent, salary, electricity, etc.) ----------
+const EXPENSE_CATEGORY_LABELS = {
+  Rent:'🏠 கடை வாடகை / Rent',
+  Salary:'👷 சம்பளம் / Staff Salary',
+  Electricity:'💡 மின்சாரம் / Electricity',
+  Water:'🚰 தண்ணீர் / Water',
+  Transport:'🚚 போக்குவரத்து / Transport',
+  Maintenance:'🔧 பராமரிப்பு / Maintenance',
+  Other:'📌 மற்றவை / Other'
+};
+function totalExpensesAll(){
+  return expenses.reduce((s,e)=>s+e.amount,0);
+}
+// Custom category names typed under "Other" are kept from saved expenses,
+// so they show up in the dropdown next time (and sync with the expenses data).
+function getCustomExpCategories(){
+  const seen = {};
+  expenses.forEach(e=>{
+    const c = (e.category||'').trim();
+    if(c && c !== 'Other' && !EXPENSE_CATEGORY_LABELS[c] && !seen[c.toLowerCase()]) seen[c.toLowerCase()] = c;
+  });
+  return Object.values(seen).sort((a,b)=>a.localeCompare(b));
+}
+// Fill the category <select>: presets, then your own categories, then "Other" (type a new name).
+function populateExpCategorySelect(){
+  const sel = document.getElementById('expCategory');
+  if(!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = '';
+  const add = (value, text)=>{ const o = document.createElement('option'); o.value = value; o.textContent = text; sel.appendChild(o); };
+  Object.keys(EXPENSE_CATEGORY_LABELS).filter(k=>k!=='Other').forEach(k=> add(k, EXPENSE_CATEGORY_LABELS[k]));
+  getCustomExpCategories().forEach(c=> add(c, '📌 '+c));
+  add('Other', '➕ புதிய வகை / New category…');
+  if(prev && Array.from(sel.options).some(o=>o.value===prev)) sel.value = prev;
+  onExpCategoryChange();
+}
+function onExpCategoryChange(){
+  const sel = document.getElementById('expCategory');
+  const custom = document.getElementById('expCategoryCustom');
+  custom.style.display = sel.value === 'Other' ? 'block' : 'none';
+}
+async function addExpense(){
+  const dateVal = document.getElementById('expDate').value;
+  const selVal = document.getElementById('expCategory').value;
+  let category = selVal;
+  if(selVal === 'Other'){
+    category = document.getElementById('expCategoryCustom').value.trim() || 'Other';
+    const existing = getCustomExpCategories().find(c=>c.toLowerCase()===category.toLowerCase());
+    if(existing) category = existing;
+    else {
+      const presetKey = Object.keys(EXPENSE_CATEGORY_LABELS).find(k=>k.toLowerCase()===category.toLowerCase());
+      if(presetKey) category = presetKey;
+    }
+  }
+  const description = document.getElementById('expDescription').value.trim();
+  const amount = parseFloat(document.getElementById('expAmount').value);
+  const payment = document.getElementById('expPayment').value;
+  const recurring = document.getElementById('expRecurring').checked;
+  if(isNaN(amount) || amount<=0){ toast('சரியான தொகை போடவும் / Enter a valid amount'); return; }
+  const dateIso = dateVal ? new Date(dateVal+'T12:00:00').toISOString() : new Date().toISOString();
+  const receiptInput = document.getElementById('expReceipt');
+  let receipt = null;
+  if(receiptInput && receiptInput.files && receiptInput.files[0]){
+    try{ receipt = await resizeImageToDataUrl(receiptInput.files[0], 400); }
+    catch(e){ console.error('receipt resize failed', e); toast('ரசீது படம் சேர்க்க முடியல் / Could not add receipt photo, expense saved without it'); }
+  }
+  const entry = { id:'e'+Date.now(), date: dateIso, category, description, amount, payment, receipt };
+  if(recurring){ entry.recurring = true; entry.lastAddedMonth = monthKeyOf(dateIso); }
+  expenses.push(entry);
+  saveExpenses(expenses);
+  document.getElementById('expCategory').selectedIndex = 0;
+  document.getElementById('expCategoryCustom').value = ''; document.getElementById('expCategoryCustom').style.display = 'none';
+  document.getElementById('expDescription').value = '';
+  document.getElementById('expAmount').value = '';
+  document.getElementById('expRecurring').checked = false;
+  if(receiptInput) receiptInput.value = '';
+  renderExpenses();
+  toast('செலவு சேர்க்கப்பட்டது / Expense added');
+}
+// Recurring expenses: once per calendar month, auto-copy any expense marked
+// "recurring" into a fresh entry for the current month (only if it hasn't
+// already been added this month), so rent/salary etc. don't need re-entering.
+function checkRecurringExpenses(){
+  const curMonth = monthKeyOf(new Date().toISOString());
+  let added = false;
+  expenses.forEach(e=>{
+    if(e.recurring && e.lastAddedMonth !== curMonth){
+      expenses.push({ id:'e'+Date.now()+Math.random().toString(36).slice(2,6), date: new Date().toISOString(),
+        category: e.category, description: e.description, amount: e.amount, payment: e.payment, receipt: null });
+      e.lastAddedMonth = curMonth;
+      added = true;
+    }
+  });
+  if(added) saveExpenses(expenses);
+}
+// ---------- Monthly budgets per expense category ----------
+function loadExpenseBudgets(){ try{ return JSON.parse(localStorage.getItem('expenseBudgets')) || {}; }catch(e){ return {}; } }
+function saveExpenseBudgets(){
+  const budgets = {};
+  Object.keys(EXPENSE_CATEGORY_LABELS).forEach(key=>{
+    const el = document.getElementById('budgetInput-'+key);
+    if(el && el.value) budgets[key] = parseFloat(el.value) || 0;
+  });
+  localStorage.setItem('expenseBudgets', JSON.stringify(budgets));
+  toast('Budget சேமிக்கப்பட்டது / Budgets saved');
+  renderExpenses();
+}
+function renderExpenseBudgetInputs(){
+  const budgets = loadExpenseBudgets();
+  const box = document.getElementById('expBudgetInputs');
+  if(!box) return;
+  box.innerHTML = Object.keys(EXPENSE_CATEGORY_LABELS).map(key=>`
+    <div class="row" style="margin-bottom:6px;">
+      <div style="flex:2;"><label style="margin-bottom:2px;">${EXPENSE_CATEGORY_LABELS[key]}</label></div>
+      <div style="flex:1;"><input id="budgetInput-${key}" type="number" placeholder="₹ Budget" value="${budgets[key] ?? ''}"></div>
+    </div>`).join('');
+}
+function deleteExpense(id){
+  if(!confirm('இந்த செலவை நீக்கவா? / Delete this expense?')) return;
+  expenses = expenses.filter(e=>e.id!==id);
+  saveExpenses(expenses);
+  renderExpenses();
+}
+// ---------- வரவுப் பட்டியல் — money given to people & received back ----------
+function setIncExpTab(which){
+  document.getElementById('ieTabIncome').classList.toggle('active', which==='income');
+  document.getElementById('ieTabExpense').classList.toggle('active', which==='expense');
+  document.getElementById('subIncome').style.display = which==='income' ? '' : 'none';
+  document.getElementById('subExpense').style.display = which==='expense' ? '' : 'none';
+}
+function setLgType(t){
+  document.getElementById('lgType').value = t;
+  document.getElementById('lgTypeGiven').classList.toggle('active', t==='given');
+  document.getElementById('lgTypeRecv').classList.toggle('active', t==='received');
+}
+function lendingPeople(){
+  const m = {};
+  lendings.forEach(x=>{
+    const key = (x.person||'').trim().toLowerCase();
+    const p = m[key] || (m[key] = { key, name:(x.person||'').trim(), phone:'', given:0, received:0, last:x.date, entries:[] });
+    if(x.phone) p.phone = x.phone;
+    if(x.type==='given') p.given += x.amount; else p.received += x.amount;
+    if(new Date(x.date) > new Date(p.last)) p.last = x.date;
+    p.entries.push(x);
+  });
+  return Object.values(m).map(p=>Object.assign(p,{ balance: p.given - p.received }));
+}
+function addLending(entryOverride){
+  const type = (entryOverride && entryOverride.type) || document.getElementById('lgType').value;
+  const person = ((entryOverride && entryOverride.person) || document.getElementById('lgName').value).trim();
+  const phone = ((entryOverride && entryOverride.phone) !== undefined ? entryOverride.phone : document.getElementById('lgPhone').value).trim();
+  const amount = entryOverride ? entryOverride.amount : parseFloat(document.getElementById('lgAmount').value);
+  const dateVal = entryOverride ? '' : document.getElementById('lgDate').value;
+  const note = entryOverride ? (entryOverride.note||'') : document.getElementById('lgNote').value.trim();
+  if(!person){ toast('பெயர் போடவும் / Enter a name'); return; }
+  if(isNaN(amount) || amount<=0){ toast('சரியான தொகை போடவும் / Enter a valid amount'); return; }
+  const dateIso = dateVal ? new Date(dateVal+'T12:00:00').toISOString() : new Date().toISOString();
+  // reuse the exact spelling already saved for this person
+  const same = lendings.find(x=>(x.person||'').trim().toLowerCase()===person.toLowerCase());
+  lendings.push({ id:'l'+Date.now()+Math.random().toString(36).slice(2,5), date:dateIso, person: same ? same.person : person, phone, type, amount, note });
+  saveLendings(lendings);
+  if(!entryOverride){
+    ['lgName','lgPhone','lgAmount','lgNote'].forEach(id=> document.getElementById(id).value = '');
+  }
+  renderIncome(); renderDashboard(); renderExpenses();
+  toast(type==='given' ? 'கொடுத்தது பதிவானது / Given entry saved' : 'திரும்ப வந்தது பதிவானது / Received-back entry saved');
+}
+function deleteLending(id){
+  if(!confirm('இந்த பதிவை நீக்கவா? / Delete this entry?')) return;
+  lendings = lendings.filter(x=>x.id!==id);
+  saveLendings(lendings);
+  renderIncome(); renderDashboard(); renderExpenses();
+}
+function renderIncome(){
+  const dateInput = document.getElementById('lgDate');
+  if(dateInput && !dateInput.value) dateInput.value = new Date().toLocaleDateString('en-CA');
+  const set = (id,t)=>{ const el = document.getElementById(id); if(el) el.textContent = t; };
+  const people = lendingPeople();
+  const totalGiven = lendings.filter(x=>x.type==='given').reduce((sum,x)=>sum+x.amount,0);
+  const totalRecv = lendings.filter(x=>x.type!=='given').reduce((sum,x)=>sum+x.amount,0);
+  const pendingPeople = people.filter(p=>p.balance>0);
+  set('lgStatPending','₹'+pendingPeople.reduce((sum,p)=>sum+p.balance,0));
+  set('lgStatPeople', pendingPeople.length);
+  set('lgStatGiven','₹'+totalGiven);
+  set('lgStatRecv','₹'+totalRecv);
+  const dl = document.getElementById('lgNames');
+  if(dl) dl.innerHTML = people.map(p=>`<option value="${escapeHtml(p.name)}"></option>`).join('');
+
+  // pending list, one row per person
+  const pbox = document.getElementById('lgPending');
+  const open = people.filter(p=>p.balance!==0).sort((a,b)=>b.balance-a.balance);
+  const settled = people.length - open.length;
+  if(open.length===0){
+    pbox.innerHTML = '<div class="empty">' + (people.length ? '✅ எல்லாம் திரும்ப வந்தாச்சு<br>All settled' : 'இன்னும் பதிவு இல்லை<br>No entries yet') + '</div>';
+  } else {
+    pbox.innerHTML = open.map(p=>{
+      const k = encodeURIComponent(p.key);
+      const owes = p.balance > 0;
+      return `<div style="border-bottom:1px solid var(--border);padding:8px 0;">
+        <div class="item-row" style="border-bottom:none;padding-bottom:4px;">
+          <div class="lg-toggle" data-key="${k}" style="cursor:pointer;flex:1;">
+            <div class="item-name">${escapeHtml(p.name)}${p.phone ? ' · <a href="tel:'+escapeHtml(p.phone)+'" onclick="event.stopPropagation()" style="color:var(--primary);text-decoration:none;">📞 '+escapeHtml(p.phone)+'</a>' : ''}</div>
+            <div class="item-sub">கொடுத்தது ₹${p.given} · வந்தது ₹${p.received} · கடைசி ${new Date(p.last).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})} · tap = history</div>
+          </div>
+          <div class="item-name" style="color:${owes?'var(--danger)':'var(--primary-dark)'};">${owes ? '₹'+p.balance : '+₹'+(-p.balance)+' extra'}</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          ${owes ? `<button class="btn-primary btn-small lg-recv" data-key="${k}" style="width:auto;">📥 திரும்ப வாங்கினேன் / Got back</button>` : ''}
+          <button class="btn-outline btn-small lg-give" data-key="${k}">📤 மறுபடி கொடுத்தேன் / Give again</button>
+        </div>
+        <div class="lg-hist" id="lgHist-${k}" style="display:none;margin-top:6px;">
+          ${p.entries.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).map(x=>`
+            <div class="item-sub" style="display:flex;justify-content:space-between;padding:3px 0;">
+              <span>${new Date(x.date).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'})} · ${x.type==='given'?'📤 கொடுத்தது':'📥 வந்தது'}${x.note?(' · '+escapeHtml(x.note)):''}</span>
+              <b>${x.type==='given'?'':'−'}₹${x.amount}</b>
+            </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('') + (settled ? `<div class="split-note" style="margin-top:8px;">✅ ${settled} பேர் முழுசா திரும்ப கொடுத்துட்டாங்க / ${settled} settled</div>` : '');
+  }
+
+  // all entries (date-range filtered)
+  const range = rangeOf('inc');
+  const list = lendings.filter(x=>inDateRange(x.date, range)).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const g = list.filter(x=>x.type==='given').reduce((sum,x)=>sum+x.amount,0);
+  const r = list.filter(x=>x.type!=='given').reduce((sum,x)=>sum+x.amount,0);
+  setRangeNote('inc', list.length + ' entries · Given ₹' + g + ' · Received back ₹' + r);
+  const box = document.getElementById('incomeList');
+  box.innerHTML = list.length===0 ? '<div class="empty">பதிவு இல்லை / No entries</div>' : list.map(x=>`
+    <div class="item-row">
+      <div>
+        <div class="item-name">${escapeHtml(x.person)} <span class="badge ${x.type==='given'?'badge-low':'badge-ok'}">${x.type==='given'?'📤 Given':'📥 Received back'}</span></div>
+        <div class="item-sub">${new Date(x.date).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}${x.note?(' · '+escapeHtml(x.note)):''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="item-name">${x.type==='given'?'':'−'}₹${x.amount}</div>
+        <span class="btn-danger" onclick="deleteLending('${x.id}')">🗑️</span>
+      </div>
+    </div>`).join('');
+}
+document.getElementById('lgPending').addEventListener('click', function(e){
+  const keyOf = el => decodeURIComponent(el.dataset.key);
+  const recv = e.target.closest('.lg-recv');
+  if(recv){
+    const p = lendingPeople().find(x=>x.key===keyOf(recv));
+    if(!p) return;
+    const v = prompt(p.name + ' — எவ்வளவு திரும்ப வாங்கினீங்க? / How much did you get back? (₹)', p.balance);
+    if(v===null) return;
+    const amt = parseFloat(v);
+    addLending({ type:'received', person:p.name, phone:p.phone, amount:amt, note:'' });
+    return;
+  }
+  const give = e.target.closest('.lg-give');
+  if(give){
+    const p = lendingPeople().find(x=>x.key===keyOf(give));
+    if(!p) return;
+    setLgType('given');
+    document.getElementById('lgName').value = p.name;
+    document.getElementById('lgPhone').value = p.phone;
+    document.getElementById('lgAmount').focus();
+    document.getElementById('lgFormCard').scrollIntoView({behavior:'smooth', block:'start'});
+    return;
+  }
+  const tg = e.target.closest('.lg-toggle');
+  if(tg){
+    const h = document.getElementById('lgHist-'+tg.dataset.key);
+    if(h) h.style.display = h.style.display === 'none' ? 'block' : 'none';
+  }
+});
+function renderExpenses(){
+  populateExpCategorySelect();
+  const dateInput = document.getElementById('expDate');
+  if(dateInput && !dateInput.value){ dateInput.value = new Date().toISOString().slice(0,10); }
+
+  document.getElementById('expStatTotal').textContent = '₹'+totalExpensesAll();
+  document.getElementById('expStatNetProfit').textContent = '₹'+(totalProfitAll() - totalExpensesAll());
+  document.getElementById('expStatNetCash').textContent = '₹'+netCashFlow(bills, expenses, lendings);
+  document.getElementById('expStatLending').textContent = '₹'+(totalGivenAll() - totalReceivedAll());
+
+  // This month's category breakdown — chart + budget comparison
+  const curMonth = monthKeyOf(new Date().toISOString());
+  const monthExpenses = expenses.filter(e=>monthKeyOf(e.date)===curMonth);
+  const catTotals = {};
+  monthExpenses.forEach(e=>{ catTotals[e.category] = (catTotals[e.category]||0) + e.amount; });
+  const catKeys = Object.keys(catTotals);
+  const catColors = ['#0f6e51','#e8792b','#3454d1','#c0392b','#8e44ad','#16a085','#d35400','#2c3e50'];
+  drawDoughnutChart('chartExpCategory', catKeys.map(k=>EXPENSE_CATEGORY_LABELS[k]||k), catKeys.map(k=>catTotals[k]), catColors);
+  const budgets = loadExpenseBudgets();
+  const budgetBox = document.getElementById('expBudgetList');
+  if(budgetBox){
+    const budgetKeys = Object.keys(budgets).filter(k=>budgets[k]>0);
+    budgetBox.innerHTML = budgetKeys.length===0 ? '<div class="split-note">Budget set பண்ணல — கீழே "Monthly Budget" section-ல set பண்ணுங்க / No budgets set yet.</div>' :
+      budgetKeys.map(k=>{
+        const spent = catTotals[k]||0; const budget = budgets[k];
+        const over = spent > budget;
+        return `<div class="item-row"><div><div class="item-name">${EXPENSE_CATEGORY_LABELS[k]||k}</div><div class="item-sub">₹${spent} spent of ₹${budget} budget</div></div><div class="item-name" style="color:${over?'#c0392b':'#0f6e51'};">${over?'⚠️ Over':'✅ OK'}</div></div>`;
+      }).join('');
+  }
+  renderExpenseBudgetInputs();
+
+  const q = (document.getElementById('expenseSearch').value||'').toLowerCase();
+  const expRange = rangeOf('exp');
+  const list = expenses.filter(e=>
+    inDateRange(e.date, expRange) && (
+    (EXPENSE_CATEGORY_LABELS[e.category]||e.category).toLowerCase().includes(q) ||
+    (e.description||'').toLowerCase().includes(q))
+  ).slice().sort((a,b)=> new Date(b.date) - new Date(a.date));
+  setRangeNote('exp', list.length + ' expenses · ₹' + list.reduce((sum,e)=>sum+e.amount,0));
+
+  const box = document.getElementById('expenseList');
+  if(list.length===0){ box.innerHTML = '<div class="empty">செலவுகள் இல்லை / No expenses yet</div>'; return; }
+  box.innerHTML = list.map(e=>`
+    <div class="item-row">
+      <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+        ${e.receipt ? `<img src="${e.receipt}" style="width:34px;height:34px;object-fit:cover;border-radius:6px;cursor:pointer;flex-shrink:0;" onclick="window.open('${e.receipt}','_blank')">` : ''}
+        <div style="min-width:0;">
+          <div class="item-name">${escapeHtml(EXPENSE_CATEGORY_LABELS[e.category]||e.category)}${e.recurring ? ' 🔁' : ''}</div>
+          <div class="item-sub">${new Date(e.date).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} · ${escapeHtml(e.payment)}${e.description ? (' · '+escapeHtml(e.description)) : ''}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="item-name">₹${e.amount}</div>
+        <span class="btn-danger" onclick="deleteExpense('${e.id}')">🗑️</span>
+      </div>
+    </div>
+  `).join('');
+}
+// ---------- Weekly Net (Payment Method Sales − Expenses) ----------
+// Week = Monday 00:00:00 to Sunday 23:59:59 (local time).
+function startOfWeek(d){
+  const dt = new Date(d);
+  dt.setHours(0,0,0,0);
+  const day = dt.getDay(); // 0=Sun..6=Sat
+  const diff = (day===0) ? -6 : (1-day); // shift back to Monday
+  dt.setDate(dt.getDate()+diff);
+  return dt;
+}
+function endOfWeek(weekStart){
+  const e = new Date(weekStart);
+  e.setDate(e.getDate()+6);
+  e.setHours(23,59,59,999);
+  return e;
+}
+function weekKeyOf(weekStart){ return startOfWeek(weekStart).toISOString().slice(0,10); }
+function weekLabel(weekStart, weekEnd){
+  return `${new Date(weekStart).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})} – ${new Date(weekEnd).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}`;
+}
+// Computes {salesByMethod, expByMethod, otherSales, totalSales, totalExp, net}
+// from bills/expenses whose date falls within [startDate, endDate] inclusive.
+function computeNetBreakdown(startDate, endDate){
+  const s = startDate.getTime(), e = endDate.getTime();
+  const inRange = iso => { const t = new Date(iso).getTime(); return t>=s && t<=e; };
+  const salesByMethod = { Cash:0, UPI:0, Card:0 };
+  let otherSales = 0;
+  bills.filter(b=>inRange(b.date)).forEach(b=>{
+    const p = b.payment;
+    if(!p || (Array.isArray(p) && p.length===0)){ otherSales += b.total; }
+    else if(typeof p === 'string'){ if(salesByMethod.hasOwnProperty(p)) salesByMethod[p] += b.total; }
+    else if(Array.isArray(p)){ p.forEach(entry=>{ if(salesByMethod.hasOwnProperty(entry.method)) salesByMethod[entry.method] += entry.amount||0; }); }
+  });
+  const expByMethod = { Cash:0, UPI:0, Card:0 };
+  expenses.filter(ex=>inRange(ex.date)).forEach(ex=>{ if(expByMethod.hasOwnProperty(ex.payment)) expByMethod[ex.payment] += ex.amount; });
+  const totalSales = salesByMethod.Cash + salesByMethod.UPI + salesByMethod.Card + otherSales;
+  const totalExp = expByMethod.Cash + expByMethod.UPI + expByMethod.Card;
+  return { salesByMethod, expByMethod, otherSales, totalSales, totalExp, net: totalSales-totalExp };
+}
+function netRowsHtml(b){
+  return ['Cash','UPI','Card'].map(m=>{
+    const sales = b.salesByMethod[m], exp = b.expByMethod[m], net = sales - exp;
+    const icon = m==='Cash' ? '💵' : (m==='UPI' ? '📱' : '💳');
+    return `
+      <div class="item-row">
+        <div><div class="item-name">${icon} ${m}</div><div class="item-sub">விற்பனை ₹${sales} − செலவு ₹${exp}</div></div>
+        <div class="item-name" style="color:${net>=0?'var(--primary-dark)':'var(--danger)'};">₹${net}</div>
+      </div>`;
+  }).join('');
+}
+// Current week's live card — automatically shows ₹0 once a new week starts,
+// since it only looks at bills/expenses dated within this week.
+function paymentNetBreakdownHtml(){
+  const now = new Date();
+  const wStart = startOfWeek(now), wEnd = endOfWeek(wStart);
+  const b = computeNetBreakdown(wStart, wEnd);
+  return `
+    <div class="split-note" style="margin-bottom:4px;">📅 ${weekLabel(wStart,wEnd)} <span class="lang-tag">(இந்த வாரம் / this week)</span></div>
+    <div class="split-note" style="margin-bottom:8px;">மொத்த விற்பனை ₹${b.totalSales} − மொத்த செலவு ₹${b.totalExp} = <b>நிகரம் / Net ₹${b.net}</b></div>
+    ${netRowsHtml(b)}
+    ${b.otherSales>0 ? `<div class="split-note" style="margin-top:8px;">❔ பணம் முறை குறிப்பிடாத sales: ₹${b.otherSales}</div>` : ''}
+  `;
+}
+// Auto-archive: any past week that has fully ended and isn't saved yet gets
+// snapshotted into weekNetHistory, so last week's numbers are never lost
+// when the live card above rolls over to the new week.
+function ensureWeeksArchived(){
+  if(bills.length===0 && expenses.length===0) return;
+  const allDates = [...bills.map(b=>b.date), ...expenses.map(e=>e.date)].filter(Boolean);
+  if(allDates.length===0) return;
+  let cursor;
+  if(weekNetHistory.length>0){
+    const lastEnd = weekNetHistory.reduce((mx,w)=>Math.max(mx, new Date(w.weekEnd).getTime()), 0);
+    cursor = new Date(lastEnd + 1000);
+  } else {
+    const earliest = new Date(Math.min(...allDates.map(d=>new Date(d).getTime())));
+    cursor = startOfWeek(earliest);
+  }
+  const curWeekStart = startOfWeek(new Date());
+  let changed = false, guard = 0;
+  while(startOfWeek(cursor).getTime() < curWeekStart.getTime() && guard < 260){
+    guard++;
+    const wStart = startOfWeek(cursor);
+    const wEnd = endOfWeek(wStart);
+    const key = weekKeyOf(wStart);
+    if(!weekNetHistory.some(w=>w.weekKey===key)){
+      const b = computeNetBreakdown(wStart, wEnd);
+      if(b.totalSales>0 || b.totalExp>0){
+        weekNetHistory.push({
+          id: 'w'+wStart.getTime(), weekKey: key,
+          weekStart: wStart.toISOString(), weekEnd: wEnd.toISOString(),
+          salesByMethod: b.salesByMethod, expByMethod: b.expByMethod, otherSales: b.otherSales,
+          totalSales: b.totalSales, totalExp: b.totalExp, net: b.net,
+          savedAt: new Date().toISOString(), edited: false
+        });
+        changed = true;
+      }
+    }
+    cursor = new Date(wEnd.getTime() + 1000);
+  }
+  if(changed){
+    weekNetHistory.sort((a,b)=> new Date(b.weekStart) - new Date(a.weekStart));
+    saveWeekNetHistory(weekNetHistory);
+  }
+}
+// Manual save/close — snapshots (or updates) the CURRENT week's numbers into
+// history right now, even before the week is over. Useful for closing the
+// register early or double-checking today's running total is saved.
+function saveCurrentWeekNow(){
+  const now = new Date();
+  const wStart = startOfWeek(now), wEnd = endOfWeek(wStart);
+  const key = weekKeyOf(wStart);
+  const b = computeNetBreakdown(wStart, wEnd);
+  const idx = weekNetHistory.findIndex(w=>w.weekKey===key);
+  const entry = {
+    id: idx>=0 ? weekNetHistory[idx].id : 'w'+wStart.getTime(), weekKey: key,
+    weekStart: wStart.toISOString(), weekEnd: wEnd.toISOString(),
+    salesByMethod: b.salesByMethod, expByMethod: b.expByMethod, otherSales: b.otherSales,
+    totalSales: b.totalSales, totalExp: b.totalExp, net: b.net,
+    savedAt: new Date().toISOString(), edited: idx>=0 ? weekNetHistory[idx].edited : false
+  };
+  if(idx>=0) weekNetHistory[idx] = entry; else weekNetHistory.push(entry);
+  weekNetHistory.sort((a,b)=> new Date(b.weekStart) - new Date(a.weekStart));
+  saveWeekNetHistory(weekNetHistory);
+  toast('✅ இந்த வாரம் Save ஆனது / This week saved');
+  renderReports();
+}
+function weekNetHistoryHtml(){
+  if(weekNetHistory.length===0) return '<div class="empty">இன்னும் எந்த வாரமும் Save ஆகல் / No week saved yet</div>';
+  return weekNetHistory.slice().sort((a,b)=> new Date(b.weekStart) - new Date(a.weekStart)).map(w=>`
+    <div class="item-row" id="weekRow-${w.id}">
+      <div>
+        <div class="item-name">📅 ${weekLabel(w.weekStart,w.weekEnd)}${w.edited?' <span class="lang-tag">(edited)</span>':''}</div>
+        <div class="item-sub">விற்பனை ₹${w.totalSales} − செலவு ₹${w.totalExp}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="item-name" style="color:${w.net>=0?'var(--primary-dark)':'var(--danger)'};">₹${w.net}</div>
+        <button class="btn-outline btn-small" onclick="openEditWeekNet('${w.id}')">✏️</button>
+      </div>
+    </div>`).join('');
+}
+function openEditWeekNet(id){
+  const w = weekNetHistory.find(x=>x.id===id);
+  const row = document.getElementById('weekRow-'+id);
+  if(!w || !row) return;
+  row.outerHTML = `
+    <div class="card" id="weekRow-${id}" style="margin:8px 0;">
+      <div class="item-name" style="margin-bottom:8px;">✏️ ${weekLabel(w.weekStart,w.weekEnd)}</div>
+      <div class="row">
+        <div><label>💵 Cash விற்பனை</label><input type="number" id="wcs-${id}" value="${w.salesByMethod.Cash}"></div>
+        <div><label>💵 Cash செலவு</label><input type="number" id="wce-${id}" value="${w.expByMethod.Cash}"></div>
+      </div>
+      <div class="row">
+        <div><label>📱 UPI விற்பனை</label><input type="number" id="wus-${id}" value="${w.salesByMethod.UPI}"></div>
+        <div><label>📱 UPI செலவு</label><input type="number" id="wue-${id}" value="${w.expByMethod.UPI}"></div>
+      </div>
+      <div class="row">
+        <div><label>💳 Card விற்பனை</label><input type="number" id="wcds-${id}" value="${w.salesByMethod.Card}"></div>
+        <div><label>💳 Card செலவு</label><input type="number" id="wcde-${id}" value="${w.expByMethod.Card}"></div>
+      </div>
+      <label>❔ பணம் முறை குறிப்பிடாத sales</label><input type="number" id="wother-${id}" value="${w.otherSales}">
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn-accent btn-small" style="flex:1;" onclick="saveEditWeekNet('${id}')">✅ Save</button>
+        <button class="btn-outline btn-small" style="flex:1;" onclick="renderReports()">✕ Cancel</button>
+      </div>
+    </div>`;
+}
+function saveEditWeekNet(id){
+  const w = weekNetHistory.find(x=>x.id===id);
+  if(!w) return;
+  const num = v => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+  w.salesByMethod = {
+    Cash: num(document.getElementById('wcs-'+id).value),
+    UPI: num(document.getElementById('wus-'+id).value),
+    Card: num(document.getElementById('wcds-'+id).value)
+  };
+  w.expByMethod = {
+    Cash: num(document.getElementById('wce-'+id).value),
+    UPI: num(document.getElementById('wue-'+id).value),
+    Card: num(document.getElementById('wcde-'+id).value)
+  };
+  w.otherSales = num(document.getElementById('wother-'+id).value);
+  w.totalSales = w.salesByMethod.Cash + w.salesByMethod.UPI + w.salesByMethod.Card + w.otherSales;
+  w.totalExp = w.expByMethod.Cash + w.expByMethod.UPI + w.expByMethod.Card;
+  w.net = w.totalSales - w.totalExp;
+  w.edited = true;
+  w.editedAt = new Date().toISOString();
+  saveWeekNetHistory(weekNetHistory);
+  toast('✅ Save ஆனது / Saved');
+  renderReports();
+}
+function refreshPaymentNetCard(){
+  // Recomputes the current-week card, and archives any past week that has
+  // fully ended but wasn't saved yet. Does not delete any bill/expense data.
+  ensureWeeksArchived();
+  document.getElementById('reportPayBreakdown').innerHTML = paymentNetBreakdownHtml();
+  const listBox = document.getElementById('weekNetHistoryList');
+  if(listBox) listBox.innerHTML = weekNetHistoryHtml();
+  toast('புதுப்பிக்கப்பட்டது / Refreshed');
 }
 
 function paymentBreakdownHtml(billsList, label){
@@ -1449,11 +3337,12 @@ function paymentBreakdownHtml(billsList, label){
 
 // ---------- Reports ----------
 function renderReports(){
-  // Daily / date-wise sales — with Cash/UPI/Card breakdown saved per day
+  renderDashboardCharts();
+  // Daily / date-wise sales — with Cash/UPI/Card breakdown + Profit saved per day
   const dayMap = {};
   bills.forEach(b=>{
     const dKey = new Date(b.date).toDateString();
-    if(!dayMap[dKey]) dayMap[dKey] = { total:0, count:0, date:b.date, cash:0, upi:0, card:0, other:0 };
+    if(!dayMap[dKey]) dayMap[dKey] = { total:0, count:0, date:b.date, cash:0, upi:0, card:0, other:0, profit:0 };
     dayMap[dKey].total += b.total; dayMap[dKey].count += 1;
     const p = b.payment;
     if(!p || (Array.isArray(p) && p.length===0)){ dayMap[dKey].other += b.total; }
@@ -1468,11 +3357,17 @@ function renderReports(){
         else if(entry.method==='Card') dayMap[dKey].card += entry.amount||0;
       });
     }
+    b.items.forEach(it=>{
+      const prod = products.find(x=>x.id===it.id);
+      if(prod && prod.cost!==null && prod.cost!==undefined){
+        dayMap[dKey].profit += (it.price - prod.cost) * it.qty;
+      }
+    });
   });
   const dayList = Object.entries(dayMap).map(([dKey,v])=>({dKey,...v})).sort((a,b)=> new Date(b.date) - new Date(a.date));
   const allTotal = bills.reduce((s,b)=>s+b.total,0);
   const dayBox = document.getElementById('secDaily');
-  dayBox.innerHTML = `<div class="split-note" style="margin-bottom:6px;">Total Sales (all-time): <b>₹${allTotal}</b> across ${bills.length} bills</div>` +
+  dayBox.innerHTML = `<div class="split-note" style="margin-bottom:6px;">Total Sales (all-time): <b>₹${allTotal}</b> across ${bills.length} bills · Total Profit: <b>₹${totalProfitAll()}</b></div>` +
     (dayList.length===0 ? '<div class="empty">தரவு இல்லை / No data yet</div>' :
     dayList.map(d=>`
       <div class="item-row" style="flex-direction:column;align-items:stretch;">
@@ -1481,10 +3376,14 @@ function renderReports(){
           <div class="item-name">₹${d.total}</div>
         </div>
         <div class="item-sub" style="margin-top:4px;">💵 Cash ₹${d.cash} · 📱 UPI ₹${d.upi} · 💳 Card ₹${d.card}${d.other>0 ? (' · ❔ ₹'+d.other) : ''}</div>
+        <div class="item-sub" style="margin-top:2px;color:var(--primary-dark);font-weight:600;">📈 Profit: ₹${d.profit}</div>
       </div>`).join(''));
 
-  // Payment breakdown (reuse)
-  document.getElementById('reportPayBreakdown').innerHTML = paymentBreakdownHtml(bills, 'All-time');
+  // Payment breakdown (current week, auto-resets weekly) + auto-archive past weeks
+  ensureWeeksArchived();
+  document.getElementById('reportPayBreakdown').innerHTML = paymentNetBreakdownHtml();
+  const weekNetListBox = document.getElementById('weekNetHistoryList');
+  if(weekNetListBox) weekNetListBox.innerHTML = weekNetHistoryHtml();
 
   // Top selling products
   const tally = {};
@@ -1508,6 +3407,21 @@ function renderReports(){
   document.getElementById('secProfitList').innerHTML =
     (profitList.length===0 ? '<div class="empty">தரவு இல்லை / No data yet</div>' :
     profitList.map(([name,v])=>`<div class="item-row"><div><div class="item-name">${escapeHtml(name)}</div><div class="item-sub">${v.qty} units sold</div></div><div class="item-name">₹${v.profit}</div></div>`).join(''));
+
+  // Slow-moving stock — products with the least units sold (all-time), including
+  // products that have never sold at all, so the shop owner can spot stock
+  // that's piling up.
+  const slowSorted = products.slice()
+    .map(p=>({ p, sold: tally[p.name] || 0 }))
+    .filter(x=>x.p.stock > 0)
+    .sort((a,b)=> a.sold - b.sold || (b.p.stock*b.p.price) - (a.p.stock*a.p.price))
+    .slice(0,15);
+  document.getElementById('secSlowList').innerHTML = slowSorted.length===0 ? '<div class="empty">பொருட்கள் இல்லை / No products</div>' :
+    slowSorted.map(({p,sold})=>`
+      <div class="item-row">
+        <div><div class="item-name">${escapeHtml(p.name)}</div><div class="item-sub">Stock: ${p.stock} · ${sold===0 ? 'இதுவரை விற்கல் / Never sold' : sold+' units sold'}</div></div>
+        <div class="item-name" style="color:${sold===0?'#c0392b':'inherit'};">${sold===0?'⚠️ 0':sold}</div>
+      </div>`).join('');
 
   // Stock value report
   const stockSorted = products.slice().sort((a,b)=>(b.stock*b.price)-(a.stock*a.price));
@@ -1547,7 +3461,7 @@ function renderReports(){
 
 // ---------- Backup / Restore / Excel ----------
 function downloadBackup(){
-  const data = { products, bills, exportedAt: new Date().toISOString() };
+  const data = { products, bills, expenses, lendings, exportedAt: new Date().toISOString() };
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -1566,16 +3480,41 @@ function restoreBackup(event){
       if(!Array.isArray(data.products) || !Array.isArray(data.bills)) throw new Error('bad format');
       if(!confirm('தற்போதைய data-ஐ மாற்றி இந்த backup-ஐ ஏற்றவா? / Overwrite current data with this backup?')) return;
       products = data.products; bills = data.bills;
-      saveProducts(products); saveBills(bills);
-      renderDashboard(); renderProducts(); renderHistory(); renderCustomers(); renderReports();
+      expenses = Array.isArray(data.expenses) ? data.expenses : [];
+      lendings = Array.isArray(data.lendings) ? data.lendings : [];
+      saveProducts(products); saveBills(bills); saveExpenses(expenses); saveLendings(lendings);
+      renderDashboard(); renderProducts(); renderHistory(); renderCustomers(); renderReports(); renderExpenses(); renderIncome();
       toast('Backup restore ஆனது / Backup restored');
     } catch(err){ toast('Invalid backup file'); }
   };
   reader.readAsText(file);
   event.target.value = '';
 }
+// Downloads ONE Excel file with a sheet for every screen in the sidebar:
+// Dashboard, Bill History (Billing), Stock (Products), Customers, Reports, Income & Expenses.
 function exportToExcel(){
   const wb = XLSX.utils.book_new();
+
+  // 1) Dashboard — quick totals for standard periods + net cash flow
+  const periods = [
+    ['Today','today'], ['Yesterday','yesterday'], ['This Week','week'],
+    ['This Month','thismonth'], ['Last Month','lastmonth'], ['All-time','all']
+  ];
+  const dashRows = periods.map(([label,key])=>{
+    const r = dateRangeOf(key);
+    const pBills = bills.filter(b=> inDateRange(b.date, r));
+    const pExpenses = expenses.filter(e=> inDateRange(e.date, r));
+    const pLendings = lendings.filter(x=> inDateRange(x.date, r));
+    const sales = pBills.reduce((s,b)=>s+b.total,0);
+    return {
+      'Period': label, 'Bills': pBills.length, 'Sales': sales,
+      'Avg Bill': pBills.length ? Math.round(sales/pBills.length) : 0,
+      'Net Cash Flow': netCashFlow(pBills, pExpenses, pLendings)
+    };
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dashRows), 'Dashboard');
+
+  // 2) Bill History (Billing) — every bill, line by line
   const billRows = [];
   bills.forEach(b=>{
     b.items.forEach(it=>{
@@ -1587,19 +3526,70 @@ function exportToExcel(){
       });
     });
   });
-  const billSheet = XLSX.utils.json_to_sheet(billRows);
-  XLSX.utils.book_append_sheet(wb, billSheet, 'Bills');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(billRows), 'Bill History');
 
-  const stockRows = products.map(p=>({ 'Product': p.name, 'Price': p.price, 'Cost': p.cost ?? '', 'Stock': p.stock, 'Low Stock Alert': p.low, 'Barcode': p.barcode||'' }));
-  const stockSheet = XLSX.utils.json_to_sheet(stockRows);
-  XLSX.utils.book_append_sheet(wb, stockSheet, 'Stock');
+  // 3) Products / Stock
+  const stockRows = products.map(p=>({ 'Product': p.name, 'Price': p.price, 'Cost': p.cost ?? '', 'Stock': p.stock, 'Low Stock Alert': p.low, 'Barcode': p.barcode||'', 'Category': p.category||'' }));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(stockRows), 'Stock');
 
+  // 4) Customers
   const custRows = buildCustomerList().map(c=>({ 'Customer': c.name, 'Phone': c.phone||'', 'Total Bills': c.count, 'Total Spent': c.total, 'Last Visit': new Date(c.lastDate).toLocaleDateString() }));
-  const custSheet = XLSX.utils.json_to_sheet(custRows);
-  XLSX.utils.book_append_sheet(wb, custSheet, 'Customers');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(custRows), 'Customers');
 
-  XLSX.writeFile(wb, 'zha_bill_admin_' + new Date().toISOString().slice(0,10) + '.xlsx');
-  toast('Excel file download ஆனது / Excel file downloaded');
+  // 5) Reports — daily sales/profit/payment split + top products
+  const dayMap = {};
+  bills.forEach(b=>{
+    const dKey = new Date(b.date).toDateString();
+    if(!dayMap[dKey]) dayMap[dKey] = { date:b.date, total:0, count:0, cash:0, upi:0, card:0, other:0, profit:0 };
+    const d = dayMap[dKey];
+    d.total += b.total; d.count += 1;
+    const p = b.payment;
+    if(!p || (Array.isArray(p) && p.length===0)){ d.other += b.total; }
+    else if(typeof p === 'string'){
+      if(p==='Cash') d.cash += b.total; else if(p==='UPI') d.upi += b.total; else if(p==='Card') d.card += b.total;
+    } else if(Array.isArray(p)){
+      p.forEach(entry=>{
+        if(entry.method==='Cash') d.cash += entry.amount||0;
+        else if(entry.method==='UPI') d.upi += entry.amount||0;
+        else if(entry.method==='Card') d.card += entry.amount||0;
+      });
+    }
+    b.items.forEach(it=>{
+      const prod = products.find(x=>x.id===it.id);
+      if(prod && prod.cost!==null && prod.cost!==undefined){ d.profit += (it.price - prod.cost) * it.qty; }
+    });
+  });
+  const dayRows = Object.values(dayMap).sort((a,b)=> new Date(b.date) - new Date(a.date)).map(d=>({
+    'Date': new Date(d.date).toLocaleDateString('en-IN'), 'Bills': d.count, 'Sales': d.total, 'Profit': d.profit,
+    'Cash': d.cash, 'UPI': d.upi, 'Card': d.card, 'Not Specified': d.other
+  }));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dayRows), 'Reports - Daily');
+
+  const tally = {};
+  bills.forEach(b=> b.items.forEach(it=>{ tally[it.name] = (tally[it.name]||0) + it.qty; }));
+  const topRows = Object.entries(tally).sort((a,b)=>b[1]-a[1]).map(([name,qty])=>({ 'Product': name, 'Units Sold': qty }));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(topRows), 'Reports - Top Products');
+
+  // 6) Income & Expenses — given/received-back ledger + business expenses
+  const lendRows = lendings.slice().sort((a,b)=> new Date(b.date) - new Date(a.date)).map(x=>({
+    'Date': new Date(x.date).toLocaleDateString('en-IN'), 'Person': x.person, 'Phone': x.phone||'',
+    'Type': x.type==='given' ? 'Given' : 'Received Back', 'Amount': x.amount, 'Note': x.note||''
+  }));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(lendRows), 'Income - Ledger');
+
+  const pendingRows = lendingPeople().filter(p=>p.balance!==0).sort((a,b)=>b.balance-a.balance).map(p=>({
+    'Person': p.name, 'Phone': p.phone||'', 'Total Given': p.given, 'Total Received': p.received, 'Pending Balance': p.balance
+  }));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(pendingRows), 'Income - Pending');
+
+  const expRows = expenses.slice().sort((a,b)=> new Date(b.date) - new Date(a.date)).map(e=>({
+    'Date': new Date(e.date).toLocaleDateString('en-IN'), 'Category': EXPENSE_CATEGORY_LABELS[e.category] || e.category,
+    'Description': e.description||'', 'Amount': e.amount, 'Payment': e.payment
+  }));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(expRows), 'Expenses');
+
+  XLSX.writeFile(wb, 'zha_bill_full_export_' + new Date().toISOString().slice(0,10) + '.xlsx');
+  toast('எல்லா தரவும் Excel-ஆ download ஆனது / All data downloaded to Excel');
 }
 
 // ---------- Reports screen: download all reports as one Excel file ----------
@@ -1607,11 +3597,11 @@ function downloadReportsExcel(){
   if(bills.length===0 && products.length===0){ toast('தரவு இல்லை / No data to export yet'); return; }
   const wb = XLSX.utils.book_new();
 
-  // Daily sales with Cash/UPI/Card breakdown per day
+  // Daily sales with Cash/UPI/Card breakdown + Profit per day
   const dayMap = {};
   bills.forEach(b=>{
     const dKey = new Date(b.date).toDateString();
-    if(!dayMap[dKey]) dayMap[dKey] = { date:b.date, total:0, count:0, cash:0, upi:0, card:0, other:0 };
+    if(!dayMap[dKey]) dayMap[dKey] = { date:b.date, total:0, count:0, cash:0, upi:0, card:0, other:0, profit:0 };
     dayMap[dKey].total += b.total; dayMap[dKey].count += 1;
     const p = b.payment;
     if(!p || (Array.isArray(p) && p.length===0)){ dayMap[dKey].other += b.total; }
@@ -1626,12 +3616,18 @@ function downloadReportsExcel(){
         else if(entry.method==='Card') dayMap[dKey].card += entry.amount||0;
       });
     }
+    b.items.forEach(it=>{
+      const prod = products.find(x=>x.id===it.id);
+      if(prod && prod.cost!==null && prod.cost!==undefined){
+        dayMap[dKey].profit += (it.price - prod.cost) * it.qty;
+      }
+    });
   });
   const dayRows = Object.values(dayMap)
     .sort((a,b)=> new Date(b.date) - new Date(a.date))
     .map(d=>({
       'Date': new Date(d.date).toLocaleDateString('en-IN'),
-      'Bills': d.count, 'Total Sales': d.total,
+      'Bills': d.count, 'Total Sales': d.total, 'Profit': d.profit,
       'Cash': d.cash, 'UPI': d.upi, 'Card': d.card, 'Not Specified': d.other
     }));
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dayRows), 'Daily Sales');
@@ -1699,6 +3695,18 @@ function downloadReportsExcel(){
     }));
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(historyRows), 'Date Sales History');
 
+  // Expenses
+  const expenseRows = expenses.slice()
+    .sort((a,b)=> new Date(b.date) - new Date(a.date))
+    .map(e=>({
+      'Date': new Date(e.date).toLocaleDateString('en-IN'),
+      'Category': EXPENSE_CATEGORY_LABELS[e.category] || e.category,
+      'Description': e.description || '',
+      'Amount': e.amount,
+      'Payment': e.payment
+    }));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(expenseRows), 'Expenses');
+
   XLSX.writeFile(wb, 'zha_bill_reports_' + new Date().toISOString().slice(0,10) + '.xlsx');
   toast('Reports Excel download ஆனது / Reports downloaded');
 }
@@ -1709,9 +3717,10 @@ function clearAllBills(){
   toast('எல்லா பில்களும் நீக்கப்பட்டன / All bills cleared');
 }
 function clearAllData(){
-  if(!confirm('எல்லா Products & Bills-ஐயும் நீக்கவா? இது Undo செய்ய முடியாது! / Delete ALL products & bills? This cannot be undone!')) return;
-  products = []; bills = []; saveProducts(products); saveBills(bills);
-  renderDashboard(); renderProducts(); renderHistory(); renderCustomers(); renderReports();
+  if(!confirm('எல்லா Products, Bills & Expenses-ஐயும் நீக்கவா? இது Undo செய்ய முடியாது! / Delete ALL products, bills & expenses? This cannot be undone!')) return;
+  products = []; bills = []; expenses = []; lendings = [];
+  saveProducts(products); saveBills(bills); saveExpenses(expenses); saveLendings(lendings);
+  renderDashboard(); renderProducts(); renderHistory(); renderCustomers(); renderReports(); renderExpenses(); renderIncome();
   toast('எல்லா தரவும் நீக்கப்பட்டது / All data cleared');
 }
 
