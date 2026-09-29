@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>ழா BILL | ZHA BILL</title>
+<script>try{var t=localStorage.getItem('kb_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <style>
   :root{
     --primary:#0f6e51;
@@ -22,7 +23,6 @@
     font-family:'Segoe UI',Noto Sans Tamil,Arial,sans-serif;
     background:var(--bg);
     color:var(--text);
-    padding-bottom:70px;
   }
   header{
     background:linear-gradient(135deg,var(--primary),var(--primary-dark));
@@ -70,10 +70,12 @@
   }
   .more-menu.show{display:block;}
   .more-item{
+    display:block;
     padding:13px 16px;
     font-size:.88rem;
     font-weight:600;
     color:var(--text);
+    text-decoration:none;
     cursor:pointer;
     border-bottom:1px solid var(--border);
   }
@@ -81,6 +83,10 @@
   .more-item:active{background:var(--bg);}
   .screen{display:none;padding:14px;max-width:640px;margin:0 auto;}
   .screen.active{display:block;}
+  @media(min-width:900px){
+    .screen{max-width:none;margin:0;padding:20px 28px;}
+    .tabs, .more-menu{max-width:none;}
+  }
   .card{
     background:var(--card);
     border-radius:12px;
@@ -211,14 +217,15 @@
     display:none;
   }
   .lang-tag{font-size:.68rem;color:var(--muted);}
-  .pay-options{display:flex;gap:8px;}
+  .pay-options{display:flex;gap:12px;}
   .pay-btn{
     flex:1;
     text-align:center;
-    padding:12px 6px;
+    padding:18px 10px;
+    min-height:64px;
     border:1.5px solid var(--border);
-    border-radius:10px;
-    font-size:.82rem;
+    border-radius:12px;
+    font-size:.95rem;
     font-weight:600;
     cursor:pointer;
     color:var(--text);
@@ -269,9 +276,375 @@
   .pay-stat.upi{background:#eaf6f2;border-color:#a9d9c9;}
   .pay-stat.card{background:#eef1fb;border-color:#b9c3ec;}
   .pay-stat.multi{background:#fdeeee;border-color:#eac1c1;}
+
+  /* ---- POS-style left/right layout ---- */
+
+  .pos-table-head{
+    display:flex;justify-content:space-between;gap:10px;
+    padding:0 2px 8px;margin-bottom:6px;
+    border-bottom:1px solid var(--border);
+    font-size:.68rem;font-weight:700;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.03em;
+  }
+  .pos-table-head span:first-child{text-align:left;}
+  .pos-table-head span:last-child{text-align:right;}
+  #billItems{max-height:200px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .pos-topbar{display:flex;gap:12px;align-items:stretch;margin-bottom:10px;flex-wrap:wrap;}
+  .pos-topbar-field{
+    display:flex;align-items:center;gap:8px;
+    background:var(--card);border:1px solid var(--border);border-radius:10px;
+    padding:8px 12px;
+  }
+  .pos-topbar-cust{flex:0 0 300px;}
+  .pos-topbar-search{flex:1;min-width:260px;}
+  .pos-icon{font-size:1rem;opacity:.7;flex:0 0 auto;}
+  .pos-topbar-inputs{flex:1;display:flex;flex-direction:column;min-width:0;}
+  .pos-topbar-field input{border:none;padding:2px 0;outline:none;background:transparent;width:100%;}
+  .pos-topbar-field input#custName{font-weight:600;}
+  .pos-topbar-field input.pos-sub-input{font-size:.76rem;color:var(--muted);padding-top:0;}
+  .pos-topbar-search button{flex:0 0 auto;}
+  /* small floating camera-scan popup (instead of a big inline video box) */
+  .cam-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:60;display:flex;align-items:center;justify-content:center;}
+  .cam-modal-box{position:relative;background:#000;border-radius:14px;overflow:hidden;width:260px;height:260px;box-shadow:0 8px 30px rgba(0,0,0,.4);}
+  .cam-modal-box video{width:100%;height:100%;object-fit:cover;display:block;}
+  .cam-close-btn{position:absolute;top:6px;right:6px;background:rgba(255,255,255,.92);border:none;border-radius:50%;width:28px;height:28px;font-size:.9rem;line-height:1;cursor:pointer;}
+  .cam-hint{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);color:#fff;font-size:.68rem;text-align:center;padding:5px 6px;}
+  /* flat full-width totals footer bar */
+  .pos-summary-footer{
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+    gap:14px;background:#f3f6f5;border:1px solid var(--border);border-radius:10px;
+    padding:12px 16px;margin-bottom:12px;
+  }
+  .pos-summary-stat{text-align:left;}
+  .pos-summary-stat span{display:block;font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
+  .pos-summary-stat b{display:block;font-size:1.05rem;color:var(--text);margin-top:2px;}
+  .pos-summary-stat.pos-summary-total b{font-size:1.35rem;color:var(--primary-dark);}
+  .pos-summary-discount{display:flex;align-items:center;gap:8px;}
+  .pos-summary-discount span{margin:0;}
+  .pos-summary-discount input{width:70px;padding:6px 8px;margin:0;}
+
+  #billItems::-webkit-scrollbar{width:7px;}
+  #billItems::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+  #billItems::-webkit-scrollbar-thumb:hover{background:var(--muted);}
+  .pos-actions-bar{
+    display:flex;gap:10px;margin-top:4px;
+  }
+  .pos-actions-bar button{flex:1;margin-top:0;}
+
+  /* =====================================================================
+     SMART UI POLISH — softer depth, smoother interactions, cleaner forms.
+     (Appended last so it refines the base styles above without changing
+     any layout or behaviour.)
+     ===================================================================== */
+  :root{
+    --primary:#0f7a5a; --primary-dark:#0a5240;
+    --bg:#f2f5f4; --border:#e2e9e7;
+    --radius:14px; --radius-sm:10px;
+    --shadow-sm:0 1px 2px rgba(16,40,32,.06), 0 2px 8px rgba(16,40,32,.05);
+    --shadow-md:0 4px 14px rgba(16,40,32,.10);
+    --ease:cubic-bezier(.2,.7,.3,1);
+  }
+  html{-webkit-tap-highlight-color:transparent;scroll-behavior:smooth;}
+  body{
+    background:linear-gradient(180deg,#eef4f2 0,var(--bg) 220px);
+    -webkit-font-smoothing:antialiased;
+    letter-spacing:.005em;
+  }
+  ::selection{background:rgba(15,122,90,.18);}
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-thumb{background:#c9d6d2;border-radius:10px;}
+  ::-webkit-scrollbar-thumb:hover{background:#a9bbb6;}
+
+  /* header */
+  header{
+    background:linear-gradient(120deg,var(--primary) 0%,var(--primary-dark) 100%);
+    box-shadow:0 4px 18px rgba(10,82,64,.28);
+    backdrop-filter:saturate(1.2);
+  }
+  header h1{letter-spacing:.02em;}
+
+  /* cards */
+  .card{
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-sm);
+    border:1px solid var(--border);
+    transition:box-shadow .25s var(--ease), transform .25s var(--ease);
+  }
+  .card:hover{box-shadow:var(--shadow-md);}
+  .card h3{
+    display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+    font-size:.98rem;letter-spacing:.01em;
+    padding-bottom:8px;margin-bottom:12px;
+    border-bottom:1px solid var(--border);
+  }
+
+  /* form controls */
+  label{font-weight:600;letter-spacing:.01em;}
+  input,select,textarea{
+    border:1.5px solid var(--border);
+    border-radius:var(--radius-sm);
+    background:#fff;
+    transition:border-color .18s var(--ease), box-shadow .18s var(--ease), background .18s;
+  }
+  input:hover,select:hover{border-color:#c4d3cf;}
+  input:focus,select:focus,textarea:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 4px rgba(15,122,90,.13);
+    background:#fff;
+  }
+  input::placeholder{color:#a3b1ad;}
+  input[type=checkbox]{accent-color:var(--primary);}
+
+  /* buttons */
+  button{
+    border-radius:var(--radius-sm);
+    transition:transform .12s var(--ease), box-shadow .2s var(--ease), filter .2s, background .2s;
+  }
+  button:active{transform:scale(.97);}
+  .btn-primary{
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    box-shadow:0 3px 10px rgba(15,122,90,.28);
+  }
+  .btn-primary:hover{filter:brightness(1.07);box-shadow:0 5px 14px rgba(15,122,90,.34);}
+  .btn-accent{box-shadow:0 3px 10px rgba(232,121,43,.28);}
+  .btn-accent:hover,.btn-accent2:hover{filter:brightness(1.07);}
+  .btn-outline:hover{background:#eaf6f2;}
+  .btn-danger-outline:hover{background:#fdecea;}
+  .btn-danger:hover{background:#fdecea;border-radius:8px;}
+  .qty-box button{border-radius:8px;transition:background .15s, transform .12s;}
+  .qty-box button:hover{background:#d3e4df;}
+
+  /* lists */
+  .item-row{transition:background .15s;border-radius:8px;padding-left:4px;padding-right:4px;}
+  .item-row:hover{background:#f6faf9;}
+  .item-name{letter-spacing:.005em;}
+
+  /* stat tiles */
+  .stat{
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-sm);
+    border:1px solid var(--border);
+    background:linear-gradient(180deg,#fff,#f8fbfa);
+    transition:transform .2s var(--ease), box-shadow .2s var(--ease);
+  }
+  .stat:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+  .stat b{font-size:1.2rem;letter-spacing:.01em;}
+
+  /* payment buttons */
+  .pay-btn{
+    border-radius:var(--radius);
+    transition:all .18s var(--ease);
+  }
+  .pay-btn:hover{border-color:var(--primary);transform:translateY(-1px);box-shadow:var(--shadow-sm);}
+  .pay-btn.selected{
+    background:linear-gradient(135deg,#e6f5ef,#d6efe6);
+    box-shadow:0 0 0 3px rgba(15,122,90,.15), var(--shadow-sm);
+  }
+
+  /* badges */
+  .badge{letter-spacing:.02em;}
+
+  /* modal + toast */
+  .modal-bg{backdrop-filter:blur(3px);}
+  .modal{
+    border-radius:20px 20px 0 0;
+    box-shadow:0 -8px 30px rgba(0,0,0,.18);
+    animation:slideUp .28s var(--ease);
+  }
+  @keyframes slideUp{from{transform:translateY(24px);opacity:0;}to{transform:none;opacity:1;}}
+  .toast{
+    background:rgba(28,43,40,.94);
+    box-shadow:0 8px 24px rgba(0,0,0,.25);
+    backdrop-filter:blur(6px);
+    border-radius:24px;
+    animation:toastIn .25s var(--ease);
+  }
+  @keyframes toastIn{from{transform:translate(-50%,10px);opacity:0;}to{transform:translate(-50%,0);opacity:1;}}
+
+  /* screens fade in when switched */
+  .screen.active{animation:screenIn .28s var(--ease);}
+  @keyframes screenIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  /* navigation (admin sidebar + staff tabs) */
+  .sb-item{transition:background .15s, color .15s, padding-left .15s var(--ease);border-radius:0 24px 24px 0;margin-right:10px;}
+  .sb-item:hover{background:#f1f8f5;padding-left:22px;}
+  .sb-item.active{
+    background:linear-gradient(90deg,#e3f4ed,#eef8f4);
+    box-shadow:inset 4px 0 0 var(--primary);
+    font-weight:700;
+  }
+  .sidebar{box-shadow:6px 0 24px rgba(0,0,0,.12);}
+  .tab{transition:color .15s, background .15s, border-color .2s;}
+  .tab:hover{background:#f4faf8;}
+  .tab.active{background:linear-gradient(180deg,#fff,#f0f8f5);}
+  .more-item{transition:background .15s;}
+  .more-item:hover{background:#f4faf8;}
+
+  /* reduce motion for people who prefer it */
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important;transition:none !important;scroll-behavior:auto !important;}
+  }
+
+  /* =====================================================================
+     COLOUR THEMES — pick one in Admin Panel > Settings. The choice is saved
+     in the browser and applies to both the Admin Panel and the Billing page.
+     ===================================================================== */
+  :root{
+    --tint:#eaf6f2; --tint2:#dcf0e8;
+    --ring:rgba(15,122,90,.14); --ring2:rgba(15,122,90,.30);
+  }
+  :root[data-theme="ocean"]{
+    --primary:#1769c2; --primary-dark:#0d4a8f; --accent:#f0932b; --accent2:#6c3fc5;
+    --bg:#f0f4fa; --border:#dce5f0; --tint:#e8f1fb; --tint2:#d7e6f8;
+    --ring:rgba(23,105,194,.14); --ring2:rgba(23,105,194,.30);
+  }
+  :root[data-theme="royal"]{
+    --primary:#6a3fc4; --primary-dark:#4a2a92; --accent:#e8792b; --accent2:#1769c2;
+    --bg:#f5f2fb; --border:#e4dcf2; --tint:#f0eafb; --tint2:#e2d7f6;
+    --ring:rgba(106,63,196,.14); --ring2:rgba(106,63,196,.30);
+  }
+  :root[data-theme="rose"]{
+    --primary:#c2255c; --primary-dark:#8f1a43; --accent:#f08c1b; --accent2:#6a3fc4;
+    --bg:#fbf1f5; --border:#f0dce4; --tint:#fbe9f0; --tint2:#f6d6e2;
+    --ring:rgba(194,37,92,.14); --ring2:rgba(194,37,92,.30);
+  }
+  :root[data-theme="teal"]{
+    --primary:#0e7c86; --primary-dark:#095860; --accent:#e8792b; --accent2:#3454d1;
+    --bg:#eff6f7; --border:#d9e7e9; --tint:#e4f4f5; --tint2:#d0ebed;
+    --ring:rgba(14,124,134,.14); --ring2:rgba(14,124,134,.30);
+  }
+  :root[data-theme="charcoal"]{
+    --primary:#3b4a5a; --primary-dark:#232d38; --accent:#e8a12b; --accent2:#3454d1;
+    --bg:#f3f4f6; --border:#e0e4e9; --tint:#eceff3; --tint2:#dde2e9;
+    --ring:rgba(59,74,90,.16); --ring2:rgba(59,74,90,.32);
+  }
+  body{background:linear-gradient(180deg,var(--tint) 0,var(--bg) 220px);}
+  input:focus,select:focus,textarea:focus{box-shadow:0 0 0 4px var(--ring);}
+  .btn-primary{box-shadow:0 3px 10px var(--ring2);}
+  .btn-primary:hover{box-shadow:0 5px 14px var(--ring2);}
+  .btn-outline:hover{background:var(--tint);}
+  .pay-btn.selected{background:linear-gradient(135deg,var(--tint),var(--tint2));box-shadow:0 0 0 3px var(--ring), var(--shadow-sm);}
+  .sb-item.active{background:linear-gradient(90deg,var(--tint2),var(--tint));}
+  .sb-item:hover{background:var(--tint);}
+  .tab.active{background:linear-gradient(180deg,#fff,var(--tint));}
+  .tab:hover,.more-item:hover,.item-row:hover{background:var(--tint);}
+  .stat{background:linear-gradient(180deg,#fff,var(--tint));}
+  .pos-summary-footer{background:var(--tint);}
+  ::selection{background:var(--ring2);}
+  .theme-swatches{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;}
+  .theme-swatch{
+    display:flex;flex-direction:column;align-items:center;gap:5px;
+    padding:8px 10px;border:2px solid var(--border);border-radius:12px;background:#fff;
+    font-size:.7rem;font-weight:600;color:var(--text);cursor:pointer;min-width:66px;
+  }
+  .theme-swatch i{display:block;width:34px;height:34px;border-radius:50%;box-shadow:inset 0 0 0 3px rgba(255,255,255,.55);}
+  .theme-swatch.on{border-color:var(--primary);box-shadow:0 0 0 3px var(--ring);}
+
+  /* ---- MIDNIGHT (black + blue) dark theme ---- */
+  :root[data-theme="midnight"]{
+    color-scheme:dark;
+    --primary:#2f8cff; --primary-dark:#8cc4ff; --accent:#ffa53d; --accent2:#7c8cff;
+    --bg:#05080d; --card:#0e1520; --text:#e6edf6; --muted:#8ea3bb; --border:#1f2e42;
+    --danger:#ff6b5e;
+    --tint:#0c1a2e; --tint2:#12294a;
+    --ring:rgba(47,140,255,.22); --ring2:rgba(47,140,255,.38);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.5), 0 2px 10px rgba(0,0,0,.35);
+    --shadow-md:0 6px 18px rgba(0,0,0,.55);
+  }
+  :root[data-theme="midnight"] body{background:linear-gradient(180deg,#0a1626 0,#05080d 260px);}
+  :root[data-theme="midnight"] header{background:linear-gradient(120deg,#000 0%,#08234d 55%,#1257b5 100%);box-shadow:0 4px 20px rgba(0,0,0,.6);}
+  :root[data-theme="midnight"] .btn-primary{background:linear-gradient(135deg,#2f8cff,#1257b5);color:#fff;}
+  :root[data-theme="midnight"] .card h3{color:#8cc4ff;}
+  :root[data-theme="midnight"] .stat b,
+  :root[data-theme="midnight"] .pos-summary-stat.pos-summary-total b{color:#8cc4ff;}
+  :root[data-theme="midnight"] .stat{background:linear-gradient(180deg,#111b29,#0c1a2e);}
+  :root[data-theme="midnight"] .login-card,
+  :root[data-theme="midnight"] .sidebar,
+  :root[data-theme="midnight"] .modal,
+  :root[data-theme="midnight"] .tabs,
+  :root[data-theme="midnight"] .more-menu,
+  :root[data-theme="midnight"] .theme-swatch,
+  :root[data-theme="midnight"] .edit-box,
+  :root[data-theme="midnight"] .btn-outline,
+  :root[data-theme="midnight"] .btn-danger-outline{background:var(--card);color:var(--text);}
+  :root[data-theme="midnight"] .btn-outline{color:#8cc4ff;border-color:#2f8cff;}
+  :root[data-theme="midnight"] .btn-danger-outline{color:var(--danger);}
+  :root[data-theme="midnight"] .btn-outline:hover{background:var(--tint2);}
+  :root[data-theme="midnight"] .btn-danger-outline:hover,
+  :root[data-theme="midnight"] .btn-danger:hover{background:#2a1512;}
+  :root[data-theme="midnight"] input,
+  :root[data-theme="midnight"] select,
+  :root[data-theme="midnight"] textarea,
+  :root[data-theme="midnight"] input:focus,
+  :root[data-theme="midnight"] select:focus,
+  :root[data-theme="midnight"] textarea:focus{background:#0a111a;color:var(--text);}
+  :root[data-theme="midnight"] input::placeholder{color:#5d7189;}
+  :root[data-theme="midnight"] input:hover,
+  :root[data-theme="midnight"] select:hover{border-color:#2d4260;}
+  :root[data-theme="midnight"] .pos-topbar-field{background:var(--card);}
+  :root[data-theme="midnight"] .pos-topbar-field input{background:transparent;}
+  :root[data-theme="midnight"] .pay-btn,
+  :root[data-theme="midnight"] .pay-stat{background:#0a111a;color:var(--text);}
+  :root[data-theme="midnight"] .pay-btn.selected{background:linear-gradient(135deg,#0f2748,#143a6b);color:#fff;border-color:#2f8cff;}
+  :root[data-theme="midnight"] .pay-stat.cash{background:#2a2110;}
+  :root[data-theme="midnight"] .pay-stat.upi{background:#0f2a22;}
+  :root[data-theme="midnight"] .pay-stat.card{background:#141c33;}
+  :root[data-theme="midnight"] .pay-stat.multi{background:#2a1416;}
+  :root[data-theme="midnight"] .change-box{background:#2a2110;color:#ffd58a;}
+  :root[data-theme="midnight"] .badge-low{background:#3a1a17;color:#ff8f84;}
+  :root[data-theme="midnight"] .badge-ok{background:#0f2a22;color:#6fe0b0;}
+  :root[data-theme="midnight"] .dash-card-header{background:#122033;color:var(--text);}
+  :root[data-theme="midnight"] .pos-summary-footer{background:var(--tint);}
+  :root[data-theme="midnight"] .qty-box button{background:#1a2a40;color:var(--text);}
+  :root[data-theme="midnight"] .qty-box button:hover{background:#243a58;}
+  :root[data-theme="midnight"] .item-row:hover,
+  :root[data-theme="midnight"] .tab:hover,
+  :root[data-theme="midnight"] .more-item:hover,
+  :root[data-theme="midnight"] .sb-item:hover{background:#0f2036;}
+  :root[data-theme="midnight"] .sb-item{color:var(--text);}
+  :root[data-theme="midnight"] .sb-item.active{background:linear-gradient(90deg,#12294a,#0c1a2e);color:#8cc4ff;}
+  :root[data-theme="midnight"] .tab{color:var(--muted);}
+  :root[data-theme="midnight"] .tab.active{background:linear-gradient(180deg,#0e1520,#12294a);color:#8cc4ff;}
+  :root[data-theme="midnight"] .toast{background:rgba(230,237,246,.96);color:#05080d;}
+  :root[data-theme="midnight"] .modal-bg{background:rgba(0,0,0,.7);}
+  :root[data-theme="midnight"] .cam-modal{background:rgba(0,0,0,.75);}
+  :root[data-theme="midnight"] ::-webkit-scrollbar-thumb{background:#243650;}
+  :root[data-theme="midnight"] ::-webkit-scrollbar-thumb:hover{background:#34507a;}
+  /* keep printed bills readable on paper */
+  @media print{
+    :root[data-theme="midnight"]{--card:#fff;--text:#000;--muted:#444;--border:#ccc;--bg:#fff;}
+    :root[data-theme="midnight"] body{background:#fff !important;}
+    :root[data-theme="midnight"] .modal{background:#fff !important;color:#000 !important;}
+  }
+
+  /* payment options: compact, left-aligned */
+  .pay-options{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:8px;}
+  .pay-options .pay-btn{flex:0 0 auto;min-width:78px;min-height:0;padding:8px 14px;font-size:.82rem;border-radius:10px;line-height:1.25;}
+
+  /* payment options on the left, cash/change box on the right */
+  .pay-row{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .pay-row .pay-options{flex:0 0 auto;}
+  .pay-row #cashChangeBox{flex:1 1 220px;max-width:340px;margin-left:auto;}
+  .pay-row #cashChangeBox .change-box{margin-top:0;}
+  .pay-row #cashChangeBox:empty{display:none;}
+
+  /* customer name / phone: clearly visible, editable boxes */
+  .pos-topbar-cust{flex:0 0 340px;align-items:flex-start;}
+  .pos-topbar-cust .pos-icon{margin-top:22px;}
+  .pos-topbar-cust .pos-topbar-inputs{gap:6px;}
+  .pos-topbar-cust label{margin:0 0 2px;font-size:.7rem;}
+  .pos-topbar-field.pos-topbar-cust input,
+  .pos-topbar-field.pos-topbar-cust input:focus{
+    border:1.5px solid var(--border);border-radius:var(--radius-sm,10px);
+    padding:8px 10px;margin:0;background:var(--card,#fff);font-size:.88rem;font-weight:500;color:var(--text);
+  }
+  .pos-topbar-field.pos-topbar-cust input:focus{border-color:var(--primary);}
+  .pos-topbar-field.pos-topbar-cust input.pos-sub-input{font-size:.88rem;color:var(--text);}
+  :root[data-theme="midnight"] .pos-topbar-field.pos-topbar-cust input,
+  :root[data-theme="midnight"] .pos-topbar-field.pos-topbar-cust input:focus{background:#0a111a;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/zxing-library/0.20.0/index.min.js"></script>
 <!-- Firebase (cloud database) — must load BEFORE firebase-config.js and the main app script -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -283,96 +656,83 @@
   <h1>🧾 ழா BILL <span style="font-weight:400;font-size:.9rem;">ZHA BILL</span></h1>
   <p>Shop Billing &amp; Inventory · கடை பில்லிங் &amp; ஸ்டாக்</p>
 </header>
-<div id="cloudStatus" style="background:#fff8ec;color:#7a5b1e;font-size:.7rem;text-align:center;padding:5px 10px;border-bottom:1px solid #f3d9a8;"></div>
 
 <div class="tabs">
   <div class="tab active" data-tab="billing">🧾 பில் <br><span class="lang-tag">Billing</span></div>
   <div class="tab more-tab" id="moreTabBtn">☰ மேலும் <br><span class="lang-tag">More</span></div>
 </div>
 <div class="more-menu" id="moreMenu">
-  <div class="more-item" data-tab="stock">📦 ஸ்டாக் <span class="lang-tag">/ Stock</span></div>
   <div class="more-item" data-tab="history">📜 வரலாறு <span class="lang-tag">/ History</span></div>
   <div class="more-item" data-tab="customers">👤 வாடிக்கையாளர் <span class="lang-tag">/ Customers</span></div>
   <div class="more-item" data-tab="dashboard">📊 சுருக்கம் <span class="lang-tag">/ Summary</span></div>
+  <a class="more-item" href="admin_panel.html">⚙️ Admin Panel <span class="lang-tag">/ For shop owner</span></a>
 </div>
 
 <!-- BILLING SCREEN -->
 <div class="screen active" id="billing">
-  <div class="card">
-    <h3>வாடிக்கையாளர் / Customer</h3>
-    <div class="row">
-      <div><label>பெயர் / Name</label><input id="custName" placeholder="Customer name"></div>
-      <div><label>போன் / Phone</label><input id="custPhone" placeholder="Phone number" oninput="lookupCustomerByPhone(this.value)"></div>
-    </div>
-    <div id="custPhoneMatch"></div>
-  </div>
 
-  <div class="card">
-    <h3>பொருள் சேர் / Add Item</h3>
-    <div class="split-row">
-      <input id="itemSearch" placeholder="🔍 பேர் தேடு அல்லது 📷 Barcode scan / Search name or scan barcode">
+  <div class="pos-topbar">
+    <div class="pos-topbar-field pos-topbar-cust">
+      <span class="pos-icon">👤</span>
+      <div class="pos-topbar-inputs">
+        <label for="custName">பெயர் / Customer Name</label>
+          <input id="custName" placeholder="Walk-in Customer / Name">
+        <label for="custPhone">போன் / Phone</label>
+          <input id="custPhone" class="pos-sub-input" placeholder="Phone number" oninput="lookupCustomerByPhone(this.value)">
+      </div>
+    </div>
+    <div class="pos-topbar-field pos-topbar-search">
+      <span class="pos-icon">🔍</span>
+      <input id="itemSearch" placeholder="Enter Product name / பேர் தேடு அல்லது Barcode scan">
       <button class="btn-accent btn-small" onclick="startCameraScan()">📷</button>
     </div>
-    <div id="searchResults"></div>
-    <div id="barcodeStatus" class="split-note" style="display:none;"></div>
-    <div id="cameraScanBox" style="display:none;margin-top:8px;">
-      <video id="scanVideo" style="width:100%;border-radius:10px;background:#000;" playsinline></video>
-      <button class="btn-outline" style="width:100%;margin-top:6px;" onclick="stopCameraScan()">✕ Camera நிறுத்து / Stop Camera</button>
+  </div>
+  <div id="custPhoneMatch"></div>
+  <div id="searchResults"></div>
+  <div id="barcodeStatus" class="split-note" style="display:none;"></div>
+  <div id="cameraScanBox" class="cam-modal" style="display:none;">
+    <div class="cam-modal-box">
+      <video id="scanVideo" playsinline></video>
+      <button class="cam-close-btn" onclick="stopCameraScan()">✕</button>
+      <div class="cam-hint">Barcode-ஐ frame-க்குள் காட்டுங்க<br>Point camera at the barcode</div>
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" id="billItemsCard">
     <h3>பில் விவரங்கள் / Bill Items</h3>
+    <div class="pos-table-head">
+      <span>பொருள் / Product</span><span>அளவு / Qty · கூட்டு / Subtotal</span>
+    </div>
     <div id="billItems"><div class="empty">பொருள் இன்னும் சேர்க்கவில்லை<br>No items added yet</div></div>
-    <div class="total-bar"><span>கூட்டு / Subtotal</span><span id="billSubtotal">₹0</span></div>
-    <div class="split-row" style="margin-top:8px;">
+  </div>
+
+  <div class="pos-summary-footer">
+    <div class="pos-summary-stat"><span>பொருட்கள் / Items</span><b id="billItemsCount">0</b></div>
+    <div class="pos-summary-stat"><span>கூட்டு / Subtotal</span><b id="billSubtotal">₹0</b></div>
+    <div class="pos-summary-stat pos-summary-discount">
       <span>Discount %</span>
       <input type="number" min="0" max="100" id="discountPercent" placeholder="0" oninput="renderBillItems()">
     </div>
-    <div id="discountLine" class="split-note" style="display:none;"></div>
-    <div class="total-bar"><span>மொத்தம் / Final Total</span><span id="billTotal">₹0</span></div>
+    <div class="pos-summary-stat pos-summary-total"><span>மொத்தம் / Total Payable</span><b id="billTotal">₹0</b></div>
   </div>
+  <div id="discountLine" class="split-note" style="display:none;"></div>
 
   <div class="card">
     <h3>பணம் செலுத்தும் முறை / Payment Method <span class="lang-tag">(optional · multi-select)</span></h3>
-    <div class="pay-options" id="payOptions">
-      <div class="pay-btn" data-pay="Cash" onclick="selectPay('Cash')">💵 Cash<br><span class="lang-tag">பணம்</span></div>
-      <div class="pay-btn" data-pay="UPI" onclick="selectPay('UPI')">📱 UPI<br><span class="lang-tag">யுபிஐ</span></div>
-      <div class="pay-btn" data-pay="Card" onclick="selectPay('Card')">💳 Card<br><span class="lang-tag">கார்டு</span></div>
+    <div class="pay-row">
+      <div class="pay-options" id="payOptions">
+        <div class="pay-btn" data-pay="Cash" onclick="selectPay('Cash')">💵 Cash<br><span class="lang-tag">பணம்</span></div>
+        <div class="pay-btn" data-pay="UPI" onclick="selectPay('UPI')">📱 UPI<br><span class="lang-tag">யுபிஐ</span></div>
+        <div class="pay-btn" data-pay="Card" onclick="selectPay('Card')">💳 Card<br><span class="lang-tag">கார்டு</span></div>
+      </div>
+      <div id="cashChangeBox"></div>
     </div>
     <div id="paySplit"></div>
-    <div id="cashChangeBox"></div>
   </div>
 
-  <button class="btn-primary" id="saveBillBtn" onclick="saveBill()">✅ பில் முடி / Complete Bill</button>
-  <button class="btn-outline" id="cancelEditBtn" style="display:none;width:100%;margin-top:8px;" onclick="cancelEdit()">✕ Edit ரத்து / Cancel Edit</button>
-</div>
-
-<!-- STOCK SCREEN -->
-<div class="screen" id="stock">
-  <div class="card">
-    <h3>புதிய பொருள் / New Product</h3>
-    <div class="row">
-      <div><label>பொருள் பெயர் / Item name</label><input id="newItemName" placeholder="e.g. Ladies Handbag - Black"></div>
-      <div><label>விற்பனை விலை (₹) / Selling Price</label><input id="newItemPrice" type="number" placeholder="0"></div>
-    </div>
-    <div class="row">
-      <div><label>வாங்கிய விலை (₹) / Buying Price <span class="lang-tag">(optional)</span></label><input id="newItemCost" type="number" placeholder="0"></div>
-      <div><label>ஸ்டாக் எண்ணிக்கை / Stock qty</label><input id="newItemStock" type="number" placeholder="0"></div>
-    </div>
-    <div class="row">
-      <div><label>குறைந்த அளவு எச்சரிக்கை / Low stock alert</label><input id="newItemLow" type="number" placeholder="5" value="5"></div>
-      <div><label>Barcode <span class="lang-tag">(optional)</span></label><input id="newItemBarcode" placeholder="Scan or type barcode"></div>
-    </div>
-    <label>பொருள் படம் / Product Image <span class="lang-tag">(optional, small photo)</span></label>
-    <input type="file" id="newItemImage" accept="image/*">
-    <button class="btn-primary" onclick="addProduct()">➕ சேர் / Add Product</button>
-  </div>
-
-  <div class="card">
-    <h3>பொருட்கள் பட்டியல் / Product List</h3>
-    <input id="stockSearch" placeholder="🔍 தேடு / Search..." oninput="renderStock()">
-    <div id="stockList"></div>
+  <div class="pos-actions-bar">
+    <button class="btn-outline" id="cancelEditBtn" onclick="cancelCurrentBill()">🗑️ பில் ரத்து / Cancel Bill</button>
+    <button class="btn-primary" id="saveBillBtn" onclick="saveBill()">✅ பில் முடி / Complete Bill</button>
   </div>
 </div>
 
@@ -400,28 +760,12 @@
     <div class="stat"><b id="statBills">0</b><span>மொத்த பில்கள்<br>Total bills</span></div>
   </div>
   <div class="stat-grid">
-    <div class="stat"><b id="statTotalSales">₹0</b><span>மொத்த விற்பனை<br>All-time sales</span></div>
-    <div class="stat"><b id="statLowStock">0</b><span>குறைந்த ஸ்டாக்<br>Low stock items</span></div>
-  </div>
-  <div class="stat-grid">
     <div class="stat"><b id="statStockUnits">0</b><span>மொத்த ஸ்டாக் (எண்ணிக்கை)<br>Total stock (units)</span></div>
-    <div class="stat"><b id="statStockValue">₹0</b><span>மொத்த ஸ்டாக் மதிப்பு<br>Total stock value</span></div>
-  </div>
-  <div class="stat-grid">
-    <div class="stat"><b id="statInvestment">₹0</b><span>ஸ்டாக் முதலீடு (வாங்கிய விலை)<br>Stock investment (cost)</span></div>
-    <div class="stat"><b id="statProfit">₹0</b><span>மொத்த லாபம் (விற்பனையில்)<br>Total profit (from sales)</span></div>
   </div>
   <div class="card">
     <h3>இன்று பணம் முறை வாரியாக விற்பனை / Today's Sales by Payment Method</h3>
     <div id="payBreakdown"></div>
   </div>
-  <div class="card">
-    <h3 style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="toggleTopItems()">
-      அதிகம் விற்பனையான பொருட்கள் / Top Selling Items <span id="topItemsArrow">▶</span>
-    </h3>
-    <div id="topItems" style="display:none;"><div class="empty">தரவு இல்லை / No data yet</div></div>
-  </div>
-
   <div class="card">
     <h3 style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="toggleDayWise()">
       📅 நாள் வாரியாக விற்பனை / Day-wise Sales <span id="dayWiseArrow">▶</span>
@@ -578,7 +922,6 @@ function refreshVisibleScreen(){
   const active = document.querySelector('.screen.active');
   if(!active) return;
   const id = active.id;
-  if(id === 'stock') renderStock();
   if(id === 'history') renderHistory();
   if(id === 'customers') renderCustomers();
   if(id === 'dashboard') renderDashboard();
@@ -738,7 +1081,6 @@ function switchToScreen(tabName){
     document.getElementById('moreTabBtn').classList.add('active');
   }
 
-  if(tabName==='stock') renderStock();
   if(tabName==='history') renderHistory();
   if(tabName==='customers') renderCustomers();
   if(tabName==='dashboard') renderDashboard();
@@ -764,7 +1106,8 @@ document.addEventListener('click', (e)=>{
 document.querySelectorAll('.more-item').forEach(item=>{
   item.addEventListener('click', ()=>{
     document.getElementById('moreMenu').classList.remove('show');
-    switchToScreen(item.dataset.tab);
+    if(item.dataset.tab){ switchToScreen(item.dataset.tab); }
+    // items without data-tab (like the Admin Panel link) just navigate normally
   });
 });
 
@@ -779,9 +1122,18 @@ function toast(msg){
 const itemSearch = document.getElementById('itemSearch');
 itemSearch.addEventListener('input', renderSearchResults);
 function renderSearchResults(){
-  const q = itemSearch.value.trim().toLowerCase();
+  const raw = itemSearch.value;
+  const q = raw.trim().toLowerCase();
   const box = document.getElementById('searchResults');
   if(!q){ box.innerHTML=''; return; }
+  // Auto-select: if the typed/scanned text exactly matches a barcode, add it
+  // to the bill immediately — no need to press Enter (works for camera scan
+  // and fast keyboard-wedge scanners too).
+  const exactBarcodeMatch = products.find(p => p.barcode && p.barcode === raw.trim());
+  if(exactBarcodeMatch){
+    lookupBarcode(raw.trim());
+    return;
+  }
   const matches = products.filter(p=>p.name.toLowerCase().includes(q)).slice(0,6);
   if(matches.length===0){ box.innerHTML = '<div class="empty">பொருள் இல்லை / No match</div>'; return; }
   box.innerHTML = matches.map(p=>`
@@ -854,24 +1206,82 @@ itemSearch.addEventListener('keydown', function(e){
 // ---------- Barcode: phone/laptop camera scan (ZXing library) ----------
 let _zxingReader = null;
 let _zxingStream = null;
+let _zxingLoadingPromise = null;
+
+// Loads the ZXing barcode-scanning library on demand (not at page load, so
+// the app opens fast even with a slow connection). Tries a couple of
+// different CDNs one after another before giving up — a single CDN being
+// blocked/slow/down no longer breaks the camera scan feature entirely.
+function loadZXingLibrary(){
+  if(typeof ZXingBrowser !== 'undefined' || typeof ZXing !== 'undefined'){
+    return Promise.resolve(true);
+  }
+  if(_zxingLoadingPromise) return _zxingLoadingPromise;
+  const sources = [
+    'https://cdnjs.cloudflare.com/ajax/libs/zxing-library/0.20.0/index.min.js',
+    'https://cdn.jsdelivr.net/npm/@zxing/library@0.20.0/umd/index.min.js',
+    'https://cdn.jsdelivr.net/npm/@zxing/library/umd/index.min.js'
+  ];
+  function tryLoad(i){
+    return new Promise((resolve)=>{
+      if(i >= sources.length){ resolve(false); return; }
+      const s = document.createElement('script');
+      s.src = sources[i];
+      s.onload = () => {
+        if(typeof ZXingBrowser !== 'undefined' || typeof ZXing !== 'undefined'){ resolve(true); }
+        else { tryLoad(i+1).then(resolve); }
+      };
+      s.onerror = () => { tryLoad(i+1).then(resolve); };
+      document.head.appendChild(s);
+    });
+  }
+  _zxingLoadingPromise = tryLoad(0);
+  return _zxingLoadingPromise;
+}
 
 async function startCameraScan(){
-  if(typeof ZXingBrowser === 'undefined' && typeof ZXing === 'undefined'){
+  // Camera access needs a "secure context" — HTTPS, or localhost. If this
+  // file is opened directly (file://) or over plain http on a network
+  // address, the browser silently blocks the camera and nothing happens.
+  if(!window.isSecureContext){
+    toast('📷 Camera scan வேலை செய்ய இந்த page-ஐ HTTPS-லோ localhost-லோ தான் திறக்கணும் (file-ஆ open பண்ணா camera block ஆகும்) / Camera needs HTTPS or localhost — it will not work when opening this file directly');
+    return;
+  }
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    toast('📷 இந்த browser-ல camera access support இல்ல / This browser does not support camera access');
+    return;
+  }
+  toast('📷 Camera scan load ஆகுது... / Loading camera scan...');
+  const loaded = await loadZXingLibrary();
+  if(!loaded){
     toast('Camera scan library load ஆகல, internet check பண்ணுங்க / Library failed to load — check internet');
     return;
   }
-  document.getElementById('cameraScanBox').style.display = 'block';
+  document.getElementById('cameraScanBox').style.display = 'flex';
   try{
     const CodeReader = (window.ZXingBrowser && window.ZXingBrowser.BrowserMultiFormatReader) || (window.ZXing && window.ZXing.BrowserMultiFormatReader);
+    if(!CodeReader){
+      toast('📷 Camera scan class கிடைக்கல், library version issue / Scanner class not found in the loaded library');
+      document.getElementById('cameraScanBox').style.display = 'none';
+      return;
+    }
     _zxingReader = new CodeReader();
     const videoEl = document.getElementById('scanVideo');
-    _zxingReader.decodeFromVideoDevice(null, videoEl, (result, err) => {
+    const decodePromise = _zxingReader.decodeFromVideoDevice(null, videoEl, (result, err) => {
       if(result){
         lookupBarcode(result.getText());
         stopCameraScan();
       }
     });
+    if(decodePromise && typeof decodePromise.catch === 'function'){
+      decodePromise.catch(camErr => {
+        console.error('Camera scan error:', camErr);
+        toast('📷 Camera open ஆகல் — permission கொடுத்திருக்கீங்களா, வேற app camera use பண்ணுதா பாருங்க / Could not open camera — check permission, or if another app is using it');
+        document.getElementById('cameraScanBox').style.display = 'none';
+      });
+    }
   }catch(err){
+    console.error('Camera scan error:', err);
     toast('Camera open ஆகல் / Could not open camera — check permission');
     document.getElementById('cameraScanBox').style.display = 'none';
   }
@@ -919,11 +1329,13 @@ function renderBillItems(){
   const box = document.getElementById('billItems');
   if(currentBillItems.length===0){
     box.innerHTML = '<div class="empty">பொருள் இன்னும் சேர்க்கவில்லை<br>No items added yet</div>';
+    document.getElementById('billItemsCount').textContent = '0';
     document.getElementById('billSubtotal').textContent = '₹0';
     document.getElementById('billTotal').textContent = '₹0';
     document.getElementById('discountLine').style.display = 'none';
     return;
   }
+  document.getElementById('billItemsCount').textContent = currentBillItems.reduce((s,it)=>s+it.qty,0);
   let subtotal = 0;
   box.innerHTML = currentBillItems.map(it=>{
     const amt = it.price*it.qty;
@@ -1140,101 +1552,15 @@ function showBillModal(bill){
 function closeBillModal(){ document.getElementById('billModalBg').classList.remove('show'); }
 function printBill(){ window.print(); }
 
-// ---------- Stock screen ----------
-function resizeImageToDataUrl(file, maxDim){
-  return new Promise(function(resolve, reject){
-    const reader = new FileReader();
-    reader.onload = function(e){
-      const img = new Image();
-      img.onload = function(){
-        let w = img.width, h = img.height;
-        if(w > h){ if(w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; } }
-        else { if(h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; } }
-        const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', 0.72));
-      };
-      img.onerror = function(){ reject(new Error('image load failed')); };
-      img.src = e.target.result;
-    };
-    reader.onerror = function(){ reject(new Error('file read failed')); };
-    reader.readAsDataURL(file);
-  });
-}
+// Note: product add/edit/delete and stock adjustment are admin-only now —
+// that management UI lives in admin_panel.html. This page only needs a
+// small thumbnail helper for displaying product photos while billing.
 function productThumbHtml(p, size){
   size = size || 40;
   if(p.image){
     return `<img src="${p.image}" style="width:${size}px;height:${size}px;object-fit:cover;border-radius:8px;flex-shrink:0;">`;
   }
   return `<div style="width:${size}px;height:${size}px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:${Math.round(size*0.55)}px;flex-shrink:0;">📦</div>`;
-}
-async function addProduct(){
-  const name = document.getElementById('newItemName').value.trim();
-  const price = parseFloat(document.getElementById('newItemPrice').value);
-  const costInput = document.getElementById('newItemCost').value;
-  const cost = costInput ? (parseFloat(costInput) || 0) : null; // optional buying price
-  const stock = parseInt(document.getElementById('newItemStock').value) || 0;
-  const low = parseInt(document.getElementById('newItemLow').value) || 5;
-  const barcode = document.getElementById('newItemBarcode').value.trim() || null;
-  if(!name || isNaN(price)){ toast('பெயர் & விலை போடவும் / Enter name & price'); return; }
-  if(barcode && products.some(p=>p.barcode===barcode)){
-    toast('இந்த Barcode ஏற்கனவே இருக்கு / Barcode already used'); return;
-  }
-  const imageInput = document.getElementById('newItemImage');
-  let image = null;
-  if(imageInput && imageInput.files && imageInput.files[0]){
-    try{ image = await resizeImageToDataUrl(imageInput.files[0], 200); }
-    catch(e){ console.error('image resize failed', e); toast('படம் சேர்க்க முடியல் / Could not add image, product saved without it'); }
-  }
-  products.push({id:'p'+Date.now(),name,price,cost,stock,low,barcode,image});
-  saveProducts(products);
-  document.getElementById('newItemName').value='';
-  document.getElementById('newItemPrice').value='';
-  document.getElementById('newItemCost').value='';
-  document.getElementById('newItemStock').value='';
-  document.getElementById('newItemLow').value='5';
-  document.getElementById('newItemBarcode').value='';
-  if(imageInput) imageInput.value='';
-  renderStock();
-  toast('பொருள் சேர்க்கப்பட்டது / Product added');
-}
-
-function deleteProduct(id){
-  products = products.filter(p=>p.id!==id);
-  saveProducts(products);
-  renderStock();
-}
-
-function adjustStock(id,delta){
-  const p = products.find(x=>x.id===id);
-  if(!p) return;
-  p.stock = Math.max(0, p.stock+delta);
-  saveProducts(products);
-  renderStock();
-}
-
-function renderStock(){
-  const q = (document.getElementById('stockSearch').value||'').toLowerCase();
-  const list = products.filter(p=>p.name.toLowerCase().includes(q));
-  const box = document.getElementById('stockList');
-  if(list.length===0){ box.innerHTML = '<div class="empty">பொருட்கள் இல்லை / No products</div>'; return; }
-  box.innerHTML = list.map(p=>`
-    <div class="item-row">
-      <div style="display:flex;align-items:center;gap:10px;min-width:0;">
-        ${productThumbHtml(p,42)}
-        <div style="min-width:0;">
-          <div class="item-name">${escapeHtml(p.name)} ${p.stock<=p.low?'<span class="badge badge-low">குறைவு/LOW</span>':'<span class="badge badge-ok">OK</span>'}</div>
-          <div class="item-sub">₹${p.price}${(p.cost!==null && p.cost!==undefined) ? (' · Cost: ₹'+p.cost) : ''} · ஸ்டாக்: ${p.stock}${p.barcode ? (' · #'+escapeHtml(p.barcode)) : ''}</div>
-        </div>
-      </div>
-      <div class="qty-box">
-        <button onclick="adjustStock('${p.id}',-1)">−</button>
-        <button onclick="adjustStock('${p.id}',1)">+</button>
-        <span class="btn-danger" onclick="deleteProduct('${p.id}')">🗑️</span>
-      </div>
-    </div>
-  `).join('');
 }
 
 // ---------- History screen ----------
@@ -1381,14 +1707,6 @@ function toggleDayWise(){
   arrow.textContent = isHidden ? '▼' : '▶';
 }
 
-function toggleTopItems(){
-  const box = document.getElementById('topItems');
-  const arrow = document.getElementById('topItemsArrow');
-  const isHidden = box.style.display === 'none';
-  box.style.display = isHidden ? 'block' : 'none';
-  arrow.textContent = isHidden ? '▼' : '▶';
-}
-
 // ---------- Backup / Restore (data portability across devices/browsers) ----------
 function downloadBackup(){
   const data = { products, bills, exportedAt: new Date().toISOString() };
@@ -1433,7 +1751,6 @@ function restoreBackup(event){
 
       saveProducts(products);
       saveBills(bills);
-      renderStock();
       renderHistory();
       renderDashboard();
       toast(`Backup merge ஆனது / Merged — ${addedCount} புது bills சேர்க்கப்பட்டது`);
@@ -1532,8 +1849,20 @@ function editBill(id){
 
   const btn = document.getElementById('saveBillBtn');
   btn.textContent = '✏️ பில் மாற்று / Update Bill';
-  document.getElementById('cancelEditBtn').style.display = 'block';
+  document.getElementById('cancelEditBtn').textContent = '✕ Edit ரத்து / Cancel Edit';
   toast('Bill edit பண்ணலாம் / Editing bill');
+}
+
+// Button handler: asks for confirmation before wiping out whatever is on the
+// current bill (new bill or one being edited). Skips the confirm popup if
+// there's nothing to lose.
+function cancelCurrentBill(){
+  const hasContent = currentBillItems.length>0 || document.getElementById('custName').value.trim() || document.getElementById('custPhone').value.trim();
+  if(hasContent && !confirm('இந்த பில்-ல சேர்த்த பொருட்கள் எல்லாம் நீக்கப்படும். உறுதியா?\nThis will clear everything on the current bill. Are you sure?')){
+    return;
+  }
+  cancelEdit();
+  if(hasContent) toast('🗑️ பில் ரத்து செய்யப்பட்டது / Bill cancelled');
 }
 
 function cancelEdit(){
@@ -1551,7 +1880,7 @@ function cancelEdit(){
   document.getElementById('cashChangeBox').innerHTML = '';
   renderBillItems();
   document.getElementById('saveBillBtn').textContent = '✅ பில் முடி / Complete Bill';
-  document.getElementById('cancelEditBtn').style.display = 'none';
+  document.getElementById('cancelEditBtn').textContent = '🗑️ பில் ரத்து / Cancel Bill';
 }
 
 // ---------- Dashboard ----------
@@ -1559,34 +1888,15 @@ function renderDashboard(){
   const today = new Date().toDateString();
   const todaysBills = bills.filter(b=> new Date(b.date).toDateString()===today);
   const todayTotal = todaysBills.reduce((s,b)=>s+b.total,0);
-  const allTotal = bills.reduce((s,b)=>s+b.total,0);
-  const lowStock = products.filter(p=>p.stock<=p.low).length;
 
   document.getElementById('statToday').textContent = '₹'+todayTotal;
   document.getElementById('statBills').textContent = bills.length;
-  document.getElementById('statTotalSales').textContent = '₹'+allTotal;
-  document.getElementById('statLowStock').textContent = lowStock;
 
+  // Note: All-time Sales, Low Stock Items, Total Stock Value, Stock
+  // Investment, and Total Profit are intentionally admin-only — they are
+  // shown in admin_panel.html, not on this staff-facing billing page.
   const totalStockUnits = products.reduce((s,p)=>s+p.stock,0);
-  const totalStockValue = products.reduce((s,p)=>s+(p.stock*p.price),0);
   document.getElementById('statStockUnits').textContent = totalStockUnits;
-  document.getElementById('statStockValue').textContent = '₹'+totalStockValue;
-
-  // stock investment: only counts products where a buying/cost price was entered
-  const totalInvestment = products.reduce((s,p)=> s + (p.cost!==null && p.cost!==undefined ? p.stock*p.cost : 0), 0);
-  document.getElementById('statInvestment').textContent = '₹'+totalInvestment;
-
-  // total profit from sales: (selling price - cost price) x qty, for items whose product still has a cost price set
-  let totalProfit = 0;
-  bills.forEach(b=>{
-    b.items.forEach(it=>{
-      const p = products.find(x=>x.id===it.id);
-      if(p && p.cost!==null && p.cost!==undefined){
-        totalProfit += (it.price - p.cost) * it.qty;
-      }
-    });
-  });
-  document.getElementById('statProfit').textContent = '₹'+totalProfit;
 
   // sales by payment method: TODAY only (resets automatically each day)
   let cash=0, upi=0, card=0, other=0;
@@ -1674,24 +1984,9 @@ function renderDashboard(){
     `).join('');
   }
 
-  // top items
-  const tally = {};
-  bills.forEach(b=> b.items.forEach(it=>{
-    tally[it.name] = (tally[it.name]||0) + it.qty;
-  }));
-  const sorted = Object.entries(tally).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const box = document.getElementById('topItems');
-  if(sorted.length===0){ box.innerHTML = '<div class="empty">தரவு இல்லை / No data yet</div>'; return; }
-  box.innerHTML = sorted.map(([name,qty])=>`
-    <div class="item-row">
-      <div class="item-name">${name}</div>
-      <div class="item-sub">${qty} units sold</div>
-    </div>
-  `).join('');
 }
 
 // initial render
-renderStock();
 renderShopHeader();
 
 // connect to cloud database (if firebase-config.js has been filled in)
